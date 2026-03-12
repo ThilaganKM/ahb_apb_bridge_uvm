@@ -200,54 +200,65 @@ module tb_top;
   //   negedge 3: NOW put addr2 on haddr (too late for write1 latch, perfect)
   //              data2 will be driven next cycle
   // ===========================================================================
-  task ahb_b2b_write(
-    input logic [31:0] addr1, input logic [31:0] data1,
-    input logic [31:0] addr2, input logic [31:0] data2
-  );
-    $display("[%0t] AHB BACK-TO-BACK WRITE:", $time);
-    $display("       Write1: addr=0x%08h data=0x%08h", addr1, data1);
-    $display("       Write2: addr=0x%08h data=0x%08h", addr2, data2);
+task ahb_b2b_write(
+  input logic [31:0] addr1, input logic [31:0] data1,
+  input logic [31:0] addr2, input logic [31:0] data2
+);
+  $display("[%0t] AHB BACK-TO-BACK WRITE:", $time);
+  $display("       Write1: addr=0x%08h data=0x%08h", addr1, data1);
+  $display("       Write2: addr=0x%08h data=0x%08h", addr2, data2);
 
-    // Cycle 1: Address phase of Write1
-    @(negedge hclk);
-    hselapb = 1;
-    haddr   = addr1;
-    hwrite  = 1;
-    htrans  = 2'b10;      // NONSEQ - FSM will go IDLE→WWAIT at next posedge
+  // Cycle 1: Address phase of Write1
+  @(negedge hclk);
+  hselapb = 1;
+  haddr   = addr1;
+  hwrite  = 1;
+  htrans  = 2'b10;    // NONSEQ → FSM IDLE→WWAIT at next posedge
 
-    // Cycle 2: Keep addr1 on haddr, drive data1
-    // WWAIT latch will fire at posedge of cycle 3 - addr1 must be stable here
-    @(negedge hclk);
-    hwdata  = data1;      // data for write1
-    // haddr stays addr1 - DO NOT change yet
+  // Cycle 2: Keep addr1 stable, drive data1
+  // WWAIT latch captures addr1+data1 at posedge of cycle 3
+  @(negedge hclk);
+  hwdata  = data1;
+  // haddr stays addr1, hselapb=1, htrans=NONSEQ still
+  // valid=1 → FSM will go WWAIT→WRITE_P
 
-    // Cycle 3: Now drive addr2 (write1 latch already fired at this posedge)
-    // Also keep hselapb=1 so valid=1, making FSM go WWAIT→WRITE_P
-    @(negedge hclk);
-    haddr   = addr2;      // address for write2 - safe now, write1 already latched
-    htrans  = 2'b10;      // NONSEQ - signals next transfer is valid
+  // Cycle 3: Write1 APB SETUP (WRITE_P state)
+  // NOW drive addr2 - this is Write2's address phase
+  // hselapb=1 keeps valid=1 so FSM knows another transfer is pending
+  @(negedge hclk);
+  haddr   = addr2;
+  hwdata  = data2;    // data2 also ready
+  htrans  = 2'b10;    // NONSEQ for write2
+  hselapb = 1;
 
-    // Cycle 4: Data phase of Write2, deselect
-    @(negedge hclk);
-    hwdata  = data2;
-    hselapb = 0;
-    htrans  = 2'b00;
+  // Cycle 4: Write1 APB ENABLE (WENABLE_P)
+  // FSM releases hready=1, then goes to WWAIT for write2
+  // Keep addr2/data2 stable so WWAIT can latch them
+  @(negedge hclk);
+  // hold addr2, data2, hselapb=1
 
-    // Wait for Write1 APB to complete (first hready=1)
-    @(posedge hclk);
-    while (!hready) @(posedge hclk);
-    $display("[%0t] Write1 APB complete", $time);
+  // Cycle 5: WWAIT for Write2 - latch fires: haddr_temp=addr2, hwdata_temp=data2
+  // Now deselect - no more transfers after write2
+  @(negedge hclk);
+  hselapb = 0;
+  htrans  = 2'b00;
+  hwdata  = 32'h0;
 
-    // Wait for Write2 APB to complete (second hready=1)
-    @(posedge hclk);
-    while (!hready) @(posedge hclk);
-    $display("[%0t] Write2 APB complete", $time);
+  // Wait for Write1 hready
+  @(posedge hclk);
+  while (!hready) @(posedge hclk);
+  $display("[%0t] Write1 APB complete", $time);
 
-    $display("[%0t] BACK-TO-BACK WRITE DONE", $time);
+  // Wait for Write2 hready
+  @(posedge hclk);
+  while (!hready) @(posedge hclk);
+  $display("[%0t] Write2 APB complete", $time);
 
-    @(negedge hclk);
-    ahb_idle();
-  endtask
+  $display("[%0t] BACK-TO-BACK WRITE DONE", $time);
+
+  @(negedge hclk);
+  ahb_idle();
+endtask
 
   // ===========================================================================
   // SCOREBOARD
