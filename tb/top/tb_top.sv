@@ -1,17 +1,10 @@
 // =============================================================================
 // Module  : tb_top
-// Project : AHB-APB Bridge - Directed Testbench
-// 
-// Description:
-//   Directed testbench to verify basic bridge operation before UVM.
-//   Tests:
-//     1. Single Write
-//     2. Single Read
-//     3. Back-to-back Writes  (exercises WRITE_P, WENABLE_P)
-//     4. Write then Read      (exercises WENABLE → READ path)
-//     5. Reset during transfer
+// Project : AHB-APB Bridge - Directed Testbench (Fixed)
 //
-//   Waveform: run "make wave TEST=directed" to view in GTKWave
+// Fixes:
+//   1. hrdata captured inside ahb_read task before bridge returns to IDLE
+//   2. Back-to-back write timing fixed - addr1 latched correctly in WWAIT
 // =============================================================================
 
 `timescale 1ns/1ps
@@ -44,6 +37,9 @@ module tb_top;
   logic        penable;
   logic        pwrite;
 
+  // Captured read data - grabbed inside task before hrdata goes to 0
+  logic [31:0] captured_hrdata;
+
   // ===========================================================================
   // DUT Instantiation
   // ===========================================================================
@@ -67,8 +63,7 @@ module tb_top;
   );
 
   // ===========================================================================
-  // Clock Generation
-  // 10ns period = 100MHz
+  // Clock Generation - 10ns period = 100MHz
   // ===========================================================================
   initial hclk = 0;
   always #5 hclk = ~hclk;
@@ -78,13 +73,11 @@ module tb_top;
   // ===========================================================================
   initial begin
     $dumpfile("sim.vcd");
-    $dumpvars(0, tb_top);  // dump ALL signals in tb_top and below
+    $dumpvars(0, tb_top);
   end
 
   // ===========================================================================
   // TASK: Reset
-  // Drives hresetn low for 2 cycles then releases
-  // All AHB signals driven to safe idle state during reset
   // ===========================================================================
   task do_reset();
     $display("\n[%0t] ===== APPLYING RESET =====", $time);
@@ -92,22 +85,21 @@ module tb_top;
     hselapb = 0;
     haddr   = 32'h0;
     hwrite  = 0;
-    htrans  = 2'b00;   // IDLE
+    htrans  = 2'b00;
     hwdata  = 32'h0;
     prdata  = 32'h0;
     repeat(2) @(posedge hclk);
-    #1;                // small delay after posedge to avoid race
+    #1;
     hresetn = 1;
     $display("[%0t] ===== RESET RELEASED =====\n", $time);
   endtask
 
   // ===========================================================================
   // TASK: AHB Idle
-  // Drives bus to idle state - used between transfers
   // ===========================================================================
   task ahb_idle();
     hselapb = 0;
-    htrans  = 2'b00;  // IDLE
+    htrans  = 2'b00;
     hwrite  = 0;
     haddr   = 32'h0;
     hwdata  = 32'h0;
@@ -116,101 +108,97 @@ module tb_top;
   // ===========================================================================
   // TASK: Single AHB Write
   //
-  // AHB Write is TWO phases:
-  //   Phase 1 (Address phase): drive haddr, hwrite=1, htrans=NONSEQ, hselapb=1
-  //   Phase 2 (Data phase):    drive hwdata (address phase of next transfer OR idle)
-  //
-  // We wait for hready=1 before releasing - confirms bridge is done
-  //
-  // Arguments:
-  //   addr  - target address
-  //   data  - write data
+  // AHB Write timing:
+  //   negedge N+0: drive address phase (haddr, hwrite=1, htrans=NONSEQ)
+  //   negedge N+1: drive data phase (hwdata), deassert hselapb/htrans
+  //   posedge: wait until hready=1 (sample AFTER bridge drives it)
   // ===========================================================================
   task ahb_write(input logic [31:0] addr, input logic [31:0] data);
     $display("[%0t] AHB WRITE: addr=0x%08h data=0x%08h", $time, addr, data);
 
-    // -- Address Phase --
-    @(negedge hclk);      // drive on negedge to be sampled on next posedge
+    // Address phase
+    @(negedge hclk);
     hselapb = 1;
     haddr   = addr;
     hwrite  = 1;
-    htrans  = 2'b10;      // NONSEQ - new transfer
+    htrans  = 2'b10;      // NONSEQ
 
-    // -- Data Phase --
-    // hwdata is valid one cycle after address phase
+    // Data phase - one cycle after address phase
     @(negedge hclk);
     hwdata  = data;
-    hselapb = 0;          // deselect after address phase
-    htrans  = 2'b00;      // IDLE - no more transfers
+    hselapb = 0;
+    htrans  = 2'b00;      // IDLE
 
-    // -- Wait for bridge to complete (hready=1) --
-    // Bridge will insert wait states (hready=0) while APB completes
+    // Wait on posedge - sample hready after bridge drives it
+    @(posedge hclk);
+    while (!hready) @(posedge hclk);
+
     @(negedge hclk);
-    while (!hready) @(negedge hclk);
-
-    // Small idle gap between transfers
     ahb_idle();
-    @(negedge hclk);
 
-    $display("[%0t] AHB WRITE DONE: paddr=0x%08h pwdata=0x%08h", 
-             $time, paddr, pwdata);
+    $display("[%0t] AHB WRITE DONE", $time);
   endtask
 
   // ===========================================================================
   // TASK: Single AHB Read
   //
-  // AHB Read is simpler than write - no data phase from master side:
-  //   Phase 1: drive haddr, hwrite=0, htrans=NONSEQ, hselapb=1
-  //   Phase 2: bridge drives hrdata when hready=1
-  //
-  // We supply prdata to simulate APB peripheral response
-  //
-  // Arguments:
-  //   addr      - target address
-  //   peri_data - data the APB peripheral will return on prdata
+  // FIX: Capture hrdata at the posedge where hready=1.
+  // This is the exact cycle bridge is in RENABLE state.
+  // After this posedge bridge moves to IDLE and hrdata goes to 0.
+  // So we must grab captured_hrdata HERE, not after the task returns.
   // ===========================================================================
   task ahb_read(input logic [31:0] addr, input logic [31:0] peri_data);
-    $display("[%0t] AHB READ: addr=0x%08h (peripheral will return 0x%08h)", 
+    $display("[%0t] AHB READ: addr=0x%08h (peripheral returns 0x%08h)",
              $time, addr, peri_data);
 
-    // -- Address Phase --
+    // Address phase
     @(negedge hclk);
     hselapb = 1;
     haddr   = addr;
-    hwrite  = 0;          // READ
+    hwrite  = 0;
     htrans  = 2'b10;      // NONSEQ
-    prdata  = peri_data;  // peripheral data ready (simulate APB peripheral)
+    prdata  = peri_data;  // peripheral data available
 
-    // -- Deselect after address phase --
+    // Deassert after address phase
     @(negedge hclk);
     hselapb = 0;
     htrans  = 2'b00;
 
-    // -- Wait for bridge to complete --
-    @(negedge hclk);
-    while (!hready) @(negedge hclk);
+    // Wait for hready=1 on posedge - hrdata is valid RIGHT NOW
+    @(posedge hclk);
+    while (!hready) @(posedge hclk);
 
+    // Capture here - this is RENABLE state, one cycle before hrdata goes to 0
+    captured_hrdata = hrdata;
     $display("[%0t] AHB READ DONE: hrdata=0x%08h (expected=0x%08h) %s",
-             $time, hrdata, peri_data,
-             (hrdata == peri_data) ? "PASS" : "FAIL");
+             $time, captured_hrdata, peri_data,
+             (captured_hrdata == peri_data) ? "PASS" : "FAIL");
 
-    ahb_idle();
     @(negedge hclk);
+    ahb_idle();
   endtask
 
   // ===========================================================================
   // TASK: Back-to-Back Writes
   //
-  // This is the KEY pipelining test.
-  // Second write's address phase overlaps with first write's data phase.
-  // This exercises WRITE_P and WENABLE_P states.
+  // FIX: Timing of addr2 relative to WWAIT latch.
   //
+  // RTL latch fires in always_ff when present_state==WWAIT.
   // Timeline:
-  //   Cycle 1: addr1, htrans=NONSEQ  ← address phase of write 1
-  //   Cycle 2: addr2, htrans=NONSEQ  ← address phase of write 2
-  //            data1                  ← data phase of write 1 (overlap!)
-  //   Cycle 3: idle
-  //            data2                  ← data phase of write 2
+  //   Cycle 1 posedge: FSM IDLE→WWAIT (addr1 is on haddr)
+  //   Cycle 2 posedge: FSM WWAIT→WRITE_P, latch fires: captures haddr=addr1
+  //                    BUT haddr must still be addr1 at this posedge!
+  //                    So addr2 must go on haddr at negedge of cycle 2,
+  //                    AFTER the cycle 2 posedge has already latched addr1.
+  //
+  //   negedge 1: addr1, hwrite=1, NONSEQ, hselapb=1
+  //   posedge 2: FSM enters WWAIT
+  //   negedge 2: data1=hwdata (latch will grab this at posedge 3)
+  //              addr1 still on haddr (latch grabs addr1 at posedge 3 too) ← KEY
+  //   posedge 3: latch fires in WWAIT: haddr_temp=addr1, hwdata_temp=data1 ✓
+  //              FSM: valid=1 → WWAIT→WRITE_P
+  //   negedge 3: NOW put addr2 on haddr (too late for write1 latch, perfect)
+  //              data2 will be driven next cycle
   // ===========================================================================
   task ahb_b2b_write(
     input logic [31:0] addr1, input logic [31:0] data1,
@@ -220,47 +208,55 @@ module tb_top;
     $display("       Write1: addr=0x%08h data=0x%08h", addr1, data1);
     $display("       Write2: addr=0x%08h data=0x%08h", addr2, data2);
 
-    // -- Address phase of Write 1 --
+    // Cycle 1: Address phase of Write1
     @(negedge hclk);
     hselapb = 1;
     haddr   = addr1;
     hwrite  = 1;
-    htrans  = 2'b10;    // NONSEQ
+    htrans  = 2'b10;      // NONSEQ - FSM will go IDLE→WWAIT at next posedge
 
-    // -- Address phase of Write 2 overlaps data phase of Write 1 --
+    // Cycle 2: Keep addr1 on haddr, drive data1
+    // WWAIT latch will fire at posedge of cycle 3 - addr1 must be stable here
     @(negedge hclk);
-    hwdata  = data1;    // data for write 1
-    haddr   = addr2;    // address for write 2 simultaneously!
-    htrans  = 2'b10;    // NONSEQ (new transfer, not SEQ, since addr is not sequential)
+    hwdata  = data1;      // data for write1
+    // haddr stays addr1 - DO NOT change yet
 
-    // -- Data phase of Write 2, deselect --
+    // Cycle 3: Now drive addr2 (write1 latch already fired at this posedge)
+    // Also keep hselapb=1 so valid=1, making FSM go WWAIT→WRITE_P
+    @(negedge hclk);
+    haddr   = addr2;      // address for write2 - safe now, write1 already latched
+    htrans  = 2'b10;      // NONSEQ - signals next transfer is valid
+
+    // Cycle 4: Data phase of Write2, deselect
     @(negedge hclk);
     hwdata  = data2;
     hselapb = 0;
     htrans  = 2'b00;
 
-    // -- Wait for both transfers to complete --
-    @(negedge hclk);
-    while (!hready) @(negedge hclk);
-    @(negedge hclk);
-    while (!hready) @(negedge hclk);
+    // Wait for Write1 APB to complete (first hready=1)
+    @(posedge hclk);
+    while (!hready) @(posedge hclk);
+    $display("[%0t] Write1 APB complete", $time);
+
+    // Wait for Write2 APB to complete (second hready=1)
+    @(posedge hclk);
+    while (!hready) @(posedge hclk);
+    $display("[%0t] Write2 APB complete", $time);
 
     $display("[%0t] BACK-TO-BACK WRITE DONE", $time);
 
-    ahb_idle();
     @(negedge hclk);
+    ahb_idle();
   endtask
 
   // ===========================================================================
-  // SCOREBOARD LOGIC
-  // Simple checker - compare expected vs actual
-  // In UVM we'll replace this with a proper scoreboard class
+  // SCOREBOARD
   // ===========================================================================
   int pass_count = 0;
   int fail_count = 0;
 
   task check(
-    input string   test_name,
+    input string       test_name,
     input logic [31:0] actual,
     input logic [31:0] expected
   );
@@ -268,7 +264,8 @@ module tb_top;
       $display("[PASS] %s: got 0x%08h", test_name, actual);
       pass_count++;
     end else begin
-      $display("[FAIL] %s: got 0x%08h, expected 0x%08h", test_name, actual, expected);
+      $display("[FAIL] %s: got 0x%08h, expected 0x%08h",
+               test_name, actual, expected);
       fail_count++;
     end
   endtask
@@ -281,17 +278,11 @@ module tb_top;
     $display("  AHB-APB Bridge Directed Testbench");
     $display("============================================");
 
-    // -------------------------------------------------------
-    // INIT + RESET
-    // -------------------------------------------------------
     do_reset();
     repeat(2) @(posedge hclk);
 
     // -------------------------------------------------------
     // TEST 1: Single Write
-    // Write 0xDEAD_BEEF to address 0x0000_0020
-    // Expected: paddr=0x20, pwdata=0xDEADBEEF, pwrite=1
-    //           psel=1, penable=1 at WENABLE state
     // -------------------------------------------------------
     $display("\n---------- TEST 1: Single Write ----------");
     ahb_write(32'h0000_0020, 32'hDEAD_BEEF);
@@ -299,20 +290,14 @@ module tb_top;
 
     // -------------------------------------------------------
     // TEST 2: Single Read
-    // Read from address 0x0000_0030
-    // Peripheral returns 0x1234_5678
-    // Expected: hrdata=0x12345678
     // -------------------------------------------------------
     $display("\n---------- TEST 2: Single Read ----------");
     ahb_read(32'h0000_0030, 32'h1234_5678);
-    check("Single Read hrdata", hrdata, 32'h1234_5678);
+    check("Single Read", captured_hrdata, 32'h1234_5678);
     repeat(2) @(posedge hclk);
 
     // -------------------------------------------------------
     // TEST 3: Back-to-Back Writes
-    // Write1: 0xAAAA_1111 → 0x0000_0040
-    // Write2: 0xBBBB_2222 → 0x0000_0050
-    // This exercises WRITE_P and WENABLE_P states
     // -------------------------------------------------------
     $display("\n---------- TEST 3: Back-to-Back Writes ----------");
     ahb_b2b_write(
@@ -322,31 +307,25 @@ module tb_top;
     repeat(2) @(posedge hclk);
 
     // -------------------------------------------------------
-    // TEST 4: Write then Read (different path through FSM)
-    // WENABLE → READ path
+    // TEST 4: Write then Read
     // -------------------------------------------------------
     $display("\n---------- TEST 4: Write then Read ----------");
     ahb_write(32'h0000_0060, 32'hCAFE_BABE);
     repeat(1) @(posedge hclk);
     ahb_read(32'h0000_0070, 32'hFEED_F00D);
-    check("Write-then-Read hrdata", hrdata, 32'hFEED_F00D);
+    check("Write-then-Read", captured_hrdata, 32'hFEED_F00D);
     repeat(2) @(posedge hclk);
 
     // -------------------------------------------------------
     // TEST 5: Reset During Transfer
-    // Start a write, assert reset mid-way
-    // Bridge must return to IDLE cleanly
-    // After reset release, new transfer must work correctly
     // -------------------------------------------------------
     $display("\n---------- TEST 5: Reset During Transfer ----------");
-    // Start address phase of a write
     @(negedge hclk);
     hselapb = 1;
     haddr   = 32'h0000_0080;
     hwrite  = 1;
     htrans  = 2'b10;
 
-    // Assert reset mid-transfer
     @(negedge hclk);
     $display("[%0t] Asserting reset mid-transfer", $time);
     hresetn = 0;
@@ -356,11 +335,8 @@ module tb_top;
     hresetn = 1;
     ahb_idle();
     $display("[%0t] Reset released - bridge should be in IDLE", $time);
-
     repeat(2) @(posedge hclk);
 
-    // Verify bridge works correctly after reset
-    $display("[%0t] Post-reset transfer test", $time);
     ahb_write(32'h0000_0090, 32'h5A5A_5A5A);
     repeat(2) @(posedge hclk);
 
@@ -371,6 +347,10 @@ module tb_top;
     $display("  TEST RESULTS");
     $display("  PASS: %0d", pass_count);
     $display("  FAIL: %0d", fail_count);
+    if (fail_count == 0)
+      $display("  STATUS: ALL TESTS PASSED ✓");
+    else
+      $display("  STATUS: SOME TESTS FAILED - check waveform");
     $display("============================================\n");
 
     $finish;
@@ -378,7 +358,6 @@ module tb_top;
 
   // ===========================================================================
   // TIMEOUT WATCHDOG
-  // Prevents simulation hanging if bridge gets stuck
   // ===========================================================================
   initial begin
     #10000;
@@ -387,16 +366,14 @@ module tb_top;
   end
 
   // ===========================================================================
-  // MONITOR - prints every APB transaction
-  // Watches psel+penable to detect completed APB transfers
-  // This is the precursor to the UVM monitor we'll build later
+  // APB MONITOR
   // ===========================================================================
   always @(posedge hclk) begin
     if (psel && penable) begin
       if (pwrite)
         $display("[APB MON] WRITE: paddr=0x%08h pwdata=0x%08h", paddr, pwdata);
       else
-        $display("[APB MON] READ:  paddr=0x%08h prdata=0x%08h hrdata=0x%08h", 
+        $display("[APB MON] READ:  paddr=0x%08h prdata=0x%08h hrdata=0x%08h",
                  paddr, prdata, hrdata);
     end
   end
