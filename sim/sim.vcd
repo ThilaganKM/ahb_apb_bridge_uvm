@@ -1,0 +1,49 @@
+$date
+	Thu Mar 12 17:23:45 2026
+$end
+$version
+	QuestaSim Version 2019.2
+$end
+$timescale
+	1ps
+$end
+
+$scope module tb_top $end
+
+$scope task do_reset $end
+$upscope $end
+
+$scope task ahb_idle $end
+$upscope $end
+
+$scope task ahb_write $end
+$upscope $end
+
+$scope task ahb_read $end
+$upscope $end
+
+$scope task ahb_b2b_write $end
+$upscope $end
+
+$scope task check $end
+$upscope $end
+
+$scope module dut $end
+
+$scope begin a_penable_after_psel $end
+$upscope $end
+
+$scope begin a_hready_low_in_setup $end
+$upscope $end
+
+$scope begin a_read_data_propagation $end
+$upscope $end
+
+$scope begin a_psel_stable_through_enable $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+$end
