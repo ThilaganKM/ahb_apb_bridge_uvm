@@ -109,7 +109,7 @@ compile_cov:
 #--------------------------------------------------
 
 directed:
-	$(SIM) -c tb_top -do "run -all; quit"
+	$(SIM) -c work.tb_top -do "run -all; quit"
 #--------------------------------------------------
 # Run Directed Test + dump VCD for GTKWave
 #--------------------------------------------------
