@@ -110,8 +110,7 @@ compile_cov:
 
 directed:
 	$(SIM) -c work.tb_top \
-	-do "log -r /*; run -all; quit"
-	wlf2vcd vsim.wlf sim.vcd
+	-do "vcd file sim.vcd; vcd add -r /tb_top/*; run -all; quit"
 #--------------------------------------------------
 # Run Directed Test + dump VCD for GTKWave
 #--------------------------------------------------
