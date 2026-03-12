@@ -26,21 +26,28 @@ RTL = \
   ../rtl/ahb_apb_bridge.sv
 
 #--------------------------------------------------
-# Interface Files
+# Directed TB Files (no UVM)
+#--------------------------------------------------
+
+DIRECTED_TOP = \
+  ../tb/top/tb_top.sv
+
+#--------------------------------------------------
+# Interface Files (UVM phase - later)
 #--------------------------------------------------
 
 INTERFACES = \
   ../tb/interfaces/ahb_apb_if.sv
 
 #--------------------------------------------------
-# Transaction Package
+# Transaction Package (UVM phase - later)
 #--------------------------------------------------
 
 TXN = \
   ../tb/txn/ahb_apb_txn_pkg.sv
 
 #--------------------------------------------------
-# Testbench Package (env + agents + tests)
+# Testbench Packages (UVM phase - later)
 #--------------------------------------------------
 
 TBPKG = \
@@ -50,14 +57,14 @@ TBPKG = \
   ../tb/tests/bridge_test_pkg.sv
 
 #--------------------------------------------------
-# Top Module
+# UVM Top (later)
 #--------------------------------------------------
 
-TOP = \
-  ../tb/top/tb_top.sv
+UVM_TOP = \
+  ../tb/top/tb_uvm_top.sv
 
 #--------------------------------------------------
-# Compile - RTL only (use during RTL development)
+# STEP 1: Compile RTL only
 #--------------------------------------------------
 
 compile_rtl:
@@ -65,7 +72,16 @@ compile_rtl:
 	$(VLOG) -sv $(RTL)
 
 #--------------------------------------------------
-# Compile - Full UVM TB (use after RTL is stable)
+# STEP 2: Compile RTL + Directed TB
+#--------------------------------------------------
+
+compile_directed:
+	vlib work
+	$(VLOG) -sv $(DEFINES) $(RTL)
+	$(VLOG) -sv $(DEFINES) $(DIRECTED_TOP)
+
+#--------------------------------------------------
+# STEP 3: Compile Full UVM TB (later)
 #--------------------------------------------------
 
 compile:
@@ -74,10 +90,10 @@ compile:
 	$(VLOG) -sv +incdir+$(UVM_HOME) $(TXN)
 	$(VLOG) -sv +incdir+$(UVM_HOME) $(TBPKG)
 	$(VLOG) -sv +incdir+$(UVM_HOME) $(RTL)
-	$(VLOG) -sv +incdir+$(UVM_HOME) $(TOP)
+	$(VLOG) -sv +incdir+$(UVM_HOME) $(UVM_TOP)
 
 #--------------------------------------------------
-# Compile with Coverage (use for final sign-off)
+# Compile with Coverage
 #--------------------------------------------------
 
 compile_cov:
@@ -86,58 +102,58 @@ compile_cov:
 	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(TXN)
 	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(TBPKG)
 	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(RTL)
-	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(TOP)
+	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(UVM_TOP)
 
 #--------------------------------------------------
-# Run Tests (no GUI - CLI only for MobaXterm)
+# Run Directed Test (CLI, no GUI)
 #--------------------------------------------------
 
-# Smoke test - single write + read
+directed:
+	$(SIM) -c tb_top \
+	-do "run -all; quit"
+
+#--------------------------------------------------
+# Run Directed Test + dump VCD for GTKWave
+#--------------------------------------------------
+
+wave_directed:
+	$(SIM) -c tb_top \
+	-do "run -all; quit"
+	gtkwave sim.vcd &
+
+#--------------------------------------------------
+# UVM Tests (later)
+#--------------------------------------------------
+
 smoke:
 	$(SIM) -c tb_top +UVM_TESTNAME=bridge_smoke_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
 	-do "run -all; quit"
 
-# Write test - single and back to back writes
 write_test:
 	$(SIM) -c tb_top +UVM_TESTNAME=bridge_write_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
 	-do "run -all; quit"
 
-# Read test
 read_test:
 	$(SIM) -c tb_top +UVM_TESTNAME=bridge_read_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
 	-do "run -all; quit"
 
-# Back to back pipelined transfers
 b2b_test:
 	$(SIM) -c tb_top +UVM_TESTNAME=bridge_b2b_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
 	-do "run -all; quit"
 
-# Reset during transfer
 reset_test:
 	$(SIM) -c tb_top +UVM_TESTNAME=bridge_reset_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
 	-do "run -all; quit"
 
-# Full random test with coverage
 rand_test:
 	$(SIM) -c -coverage tb_top +UVM_TESTNAME=bridge_rand_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
 	-do "run -all; coverage save -codeAll bridge.ucdb; quit"
-
-#--------------------------------------------------
-# Waveform dump - run with VCD for GTKWave
-# Usage: make wave TEST=smoke_test
-#--------------------------------------------------
-
-wave:
-	$(SIM) -c tb_top +UVM_TESTNAME=bridge_$(TEST) \
-	+UVM_VERBOSITY=UVM_HIGH \
-	-do "vcd file sim.vcd; vcd add -r /*; run -all; quit"
-	gtkwave sim.vcd &
 
 #--------------------------------------------------
 # Coverage Report
