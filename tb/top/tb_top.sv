@@ -242,7 +242,6 @@ task ahb_b2b_write(
   @(negedge hclk);
   hselapb = 0;
   htrans  = 2'b00;
-  hwdata  = 32'h0;
 
   // Wait for Write1 hready
   @(posedge hclk);
@@ -255,6 +254,9 @@ task ahb_b2b_write(
   $display("[%0t] Write2 APB complete", $time);
 
   $display("[%0t] BACK-TO-BACK WRITE DONE", $time);
+  // Cycle 6: NOW safe to zero hwdata - latch already fired
+  @(negedge hclk);
+  hwdata  = 32'h0;
 
   @(negedge hclk);
   ahb_idle();
