@@ -110,6 +110,7 @@ compile_cov:
 
 directed:
 	$(SIM) -c tb_top \
+	-voptargs="+acc" \
 	-do "run -all; quit"
 #--------------------------------------------------
 # Run Directed Test + dump VCD for GTKWave
