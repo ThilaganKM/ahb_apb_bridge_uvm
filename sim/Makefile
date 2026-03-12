@@ -110,16 +110,16 @@ compile_cov:
 
 directed:
 	$(SIM) -c tb_top \
-	-do "vcd file sim.vcd; vcd add -r /tb_top; run -all; vcd flush; quit"
+	-do "vcd file sim.vcd; vcd add -r /*; run -all; quit"
+
 #--------------------------------------------------
-# Run Directed Test + dump VCD for GTKWave
+# Run Directed Test + open GTKWave
 #--------------------------------------------------
 
 wave_directed:
 	$(SIM) -c tb_top \
-	-do "run -all; quit"
+	-do "vcd file sim.vcd; vcd add -r /*; run -all; quit"
 	gtkwave sim.vcd &
-
 #--------------------------------------------------
 # UVM Tests (later)
 #--------------------------------------------------
