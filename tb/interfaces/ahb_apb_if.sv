@@ -70,7 +70,7 @@ interface ahb_apb_if (input logic hclk);
   //   updates - giving us the settled value. This avoids race conditions.
   // ===========================================================================
   clocking master_cb @(posedge hclk);
-    default input #1step output 1step
+    default input #1step output 1step;
 
     // Outputs from driver → DUT (AHB inputs)
     output hresetn;
