@@ -554,12 +554,7 @@ package bridge_test_pkg;
 
   endclass : bridge_reset_test
 
-endpackage : bridge_test_pkg
-// =============================================================================
-// End of bridge_test_pkg.sv
-// =============================================================================
-
-// ===========================================================================
+/ ===========================================================================
   // DATA CORNERS SEQUENCE
   // Explicitly drives all-zeros, all-ones, alternating patterns
   // These are classic bug triggers that random testing rarely hits
@@ -633,3 +628,9 @@ class bridge_corners_test extends bridge_base_test;
       phase.drop_objection(this);
     endtask
 endclass : bridge_corners_test
+
+
+endpackage : bridge_test_pkg
+// =============================================================================
+// End of bridge_test_pkg.sv
+// =============================================================================
