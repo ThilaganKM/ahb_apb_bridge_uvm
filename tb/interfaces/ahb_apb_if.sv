@@ -23,6 +23,7 @@
 //   Input skew  (#1step) = sample just before clock edge
 //   Output skew (1)      = drive 1 time unit after clock edge
 // =============================================================================
+`timescale 1ns/1ps
 
 interface ahb_apb_if (input logic hclk);
 
