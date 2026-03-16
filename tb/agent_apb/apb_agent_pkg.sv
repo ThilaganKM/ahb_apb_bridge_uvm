@@ -83,55 +83,40 @@ package apb_agent_pkg;
     // before penable, per APB spec.
     // -------------------------------------------------------------------------
     task run_phase(uvm_phase phase);
-      // Initialize prdata to 0
-      vif.apb_slave_cb.prdata <= 32'h0;
+    ahb_apb_txn txn;
 
-      // Wait for reset
-      @(posedge vif.hclk);
-      wait (vif.hresetn === 1'b1);
+    @(posedge vif.hclk);
+    wait (vif.hresetn === 1'b1);
 
-      forever begin
-        @(vif.apb_slave_cb);
+    forever begin
+        // Wait for ENABLE phase on posedge
+        @(posedge vif.hclk);
+        #1; // small delta to let signals settle
 
-        // APB SETUP phase: psel=1, penable=0
-        // Pre-drive prdata so it's ready before ENABLE phase
-        if (vif.apb_slave_cb.psel && !vif.apb_slave_cb.penable) begin
-          if (!vif.apb_slave_cb.pwrite) begin
-            // Read: put data on prdata immediately in SETUP phase
-            automatic logic [7:0] idx = vif.apb_slave_cb.paddr[7:2];
-            vif.apb_slave_cb.prdata <= mem[idx];
-            `uvm_info("APB_SLAVE",
-              $sformatf("READ SETUP: paddr=0x%08h prdata=0x%08h",
-                vif.apb_slave_cb.paddr, mem[idx]),
-              UVM_HIGH)
-          end
+        if (vif.psel && vif.penable) begin
+        txn = ahb_apb_txn::type_id::create("apb_mon_txn");
+
+        // Sample directly from interface signals (not clocking block)
+        // at the exact posedge where penable is high
+        txn.addr       = vif.paddr;
+        txn.trans_type = HTRANS_NONSEQ;
+        txn.resp       = HRESP_OKAY;
+
+        if (vif.pwrite) begin
+            txn.kind = AHB_WRITE;
+            txn.data = vif.pwdata;
+        end else begin
+            txn.kind = AHB_READ;
+            txn.data = vif.prdata;
         end
 
-        // APB ENABLE phase: psel=1, penable=1
-        // Transfer completes here
-        if (vif.apb_slave_cb.psel && vif.apb_slave_cb.penable) begin
-          if (vif.apb_slave_cb.pwrite) begin
-            // Write: store data in memory
-            automatic logic [7:0] idx = vif.apb_slave_cb.paddr[7:2];
-            mem[idx] = vif.apb_slave_cb.pwdata;
-            `uvm_info("APB_SLAVE",
-              $sformatf("WRITE: paddr=0x%08h pwdata=0x%08h stored at mem[%0d]",
-                vif.apb_slave_cb.paddr, vif.apb_slave_cb.pwdata, idx),
-              UVM_HIGH)
-          end else begin
-            // Read complete - data already on prdata from SETUP phase
-            `uvm_info("APB_SLAVE",
-              $sformatf("READ ENABLE: paddr=0x%08h prdata=0x%08h",
-                vif.apb_slave_cb.paddr, vif.apb_slave_cb.prdata),
-              UVM_HIGH)
-          end
+        `uvm_info("APB_MON",
+            $sformatf("Captured: %s", txn.convert2string()),
+            UVM_MEDIUM)
+
+        ap.write(txn);
         end
-
-        // Deassert prdata when bus goes idle
-        if (!vif.apb_slave_cb.psel)
-          vif.apb_slave_cb.prdata <= 32'h0;
-
-      end
+    end
     endtask
 
     // -------------------------------------------------------------------------

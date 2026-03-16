@@ -83,44 +83,55 @@ package ahb_agent_pkg;
     // Runs forever - gets transactions and drives them one by one
     // -------------------------------------------------------------------------
     task run_phase(uvm_phase phase);
-      // Initialize all AHB signals to safe idle state
-      drive_idle();
+    ahb_apb_txn txn;
+    logic [31:0] saved_addr;
+    logic [31:0] saved_data;   // ADD THIS
+    logic        saved_write;
+    logic        transfer_pending;
 
-      // Wait for reset to deassert
-      @(posedge vif.hclk);
-      wait (vif.hresetn === 1'b1);
-      @(posedge vif.hclk);
+    transfer_pending = 0;
 
-      // Main loop - run until simulation ends
-      forever begin
-        ahb_apb_txn txn;
+    @(posedge vif.hclk);
+    wait (vif.hresetn === 1'b1);
 
-        // Get next transaction from sequencer
-        // This BLOCKS until a sequence provides a transaction
-        seq_item_port.get_next_item(txn);
+    forever begin
+        @(vif.monitor_cb);
 
-        `uvm_info("AHB_DRV",
-          $sformatf("Driving: %s", txn.convert2string()),
-          UVM_HIGH)
+        // Address phase: capture addr and write direction
+        if (vif.monitor_cb.hselapb &&
+            vif.monitor_cb.htrans == HTRANS_NONSEQ) begin
+        saved_addr       = vif.monitor_cb.haddr;
+        saved_write      = vif.monitor_cb.hwrite;
+        transfer_pending = 1;
+        end
 
-        // Drive the transaction based on type
-        case (txn.kind)
-          AHB_WRITE: drive_write(txn);
-          AHB_READ:  drive_read(txn);
-          default: begin
-            `uvm_warning("AHB_DRV", "Unknown transaction kind - driving idle")
-            drive_idle();
-          end
-        endcase
+        // Data phase: hwdata is valid one cycle after address phase
+        // Capture it here before it gets zeroed
+        if (transfer_pending && saved_write)
+        saved_data = vif.monitor_cb.hwdata;  // ADD THIS
 
-        // Drive inter-transaction delay (idle cycles)
-        if (txn.delay_cycles > 0)
-          drive_idle_cycles(txn.delay_cycles);
+        // Completion: hready=1
+        if (transfer_pending && vif.monitor_cb.hready) begin
+        txn = ahb_apb_txn::type_id::create("ahb_mon_txn");
+        txn.addr       = saved_addr;
+        txn.kind       = saved_write ? AHB_WRITE : AHB_READ;
+        txn.trans_type = HTRANS_NONSEQ;
+        txn.resp       = vif.monitor_cb.hresp ? HRESP_ERROR : HRESP_OKAY;
 
-        // Signal to sequencer that transaction is done
-        // This unblocks finish_item() in the sequence
-        seq_item_port.item_done();
-      end
+        // FIX: use saved_data for writes, hrdata for reads
+        if (saved_write)
+            txn.data = saved_data;       // was: vif.monitor_cb.hwdata (already 0)
+        else
+            txn.data = vif.monitor_cb.hrdata;
+
+        `uvm_info("AHB_MON",
+            $sformatf("Captured: %s", txn.convert2string()),
+            UVM_MEDIUM)
+
+        ap.write(txn);
+        transfer_pending = 0;
+        end
+    end
     endtask
 
     // -------------------------------------------------------------------------
