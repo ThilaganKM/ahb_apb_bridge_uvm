@@ -19,10 +19,14 @@ package ahb_agent_pkg;
   //===========================================================================
   // AHB DRIVER
   //
-  // Drives signals directly on negedge (like directed TB) to avoid
-  // clocking block output skew fighting the RTL's posedge sampling.
-  // Clocking block #1 output skew means signal arrives 1ns AFTER posedge
-  // which is too late for the RTL to latch correctly.
+  // KEY FIX: Mirror exactly what the directed testbench did:
+  //   - Drive on negedge
+  //   - HOLD haddr stable through WWAIT (do NOT zero it in data phase)
+  //   - Only deassert after hready=1
+  //
+  // RTL WWAIT latch fires at posedge when present_state==WWAIT.
+  // haddr must still be valid at that posedge.
+  // If driver zeros haddr in data phase, RTL latches 0. That was the bug.
   //===========================================================================
   class ahb_driver extends uvm_driver #(ahb_apb_txn);
     `uvm_component_utils(ahb_driver)
@@ -42,7 +46,7 @@ package ahb_agent_pkg;
     task run_phase(uvm_phase phase);
       ahb_apb_txn txn;
 
-      // Initialize bus to idle on negedge
+      // Initialize bus idle
       @(negedge vif.hclk);
       vif.hselapb <= 0;
       vif.haddr   <= 0;
@@ -50,7 +54,7 @@ package ahb_agent_pkg;
       vif.htrans  <= HTRANS_IDLE;
       vif.hwdata  <= 0;
 
-      // Wait for reset release
+      // Wait for reset
       @(posedge vif.hclk);
       wait (vif.hresetn === 1'b1);
       @(posedge vif.hclk);
@@ -73,6 +77,7 @@ package ahb_agent_pkg;
           vif.htrans  <= HTRANS_IDLE;
           vif.haddr   <= 0;
           vif.hwdata  <= 0;
+          vif.hwrite  <= 0;
           repeat(txn.delay_cycles - 1) @(negedge vif.hclk);
         end
 
@@ -81,28 +86,49 @@ package ahb_agent_pkg;
     endtask
 
     // -------------------------------------------------------------------------
-    // drive_write: drive on negedge, RTL samples on posedge
+    // drive_write
+    //
+    // Cycle by cycle (matches directed TB exactly):
+    //
+    //   negedge 1: hselapb=1, haddr=addr, hwrite=1, htrans=NONSEQ
+    //              → posedge: FSM IDLE→WWAIT
+    //
+    //   negedge 2: hwdata=data   ← data phase
+    //              haddr STILL HELD (do NOT zero!)
+    //              hselapb=0, htrans=IDLE
+    //              → posedge: FSM in WWAIT, latch fires: haddr_temp=addr ✓
+    //
+    //   posedge 3+: wait for hready=1
+    //
+    //   negedge after hready: zero everything
     // -------------------------------------------------------------------------
     task drive_write(ahb_apb_txn txn);
-      // Address phase - drive on negedge, sampled by RTL on next posedge
+      // Cycle 1: Address phase
       @(negedge vif.hclk);
       vif.hselapb <= 1;
-      vif.haddr   <= txn.addr;
+      vif.haddr   <= txn.addr;   // drive address
       vif.hwrite  <= 1;
       vif.htrans  <= HTRANS_NONSEQ;
-      vif.hwdata  <= 0;         // hwdata not valid yet in address phase
+      vif.hwdata  <= 0;
 
-      // Data phase - hwdata valid one negedge after address phase
+      // Cycle 2: Data phase
+      // CRITICAL: haddr held stable so WWAIT latch captures correct address
       @(negedge vif.hclk);
-      vif.hwdata  <= txn.data;
+      vif.hwdata  <= txn.data;   // data now valid
       vif.hselapb <= 0;
       vif.htrans  <= HTRANS_IDLE;
-      vif.haddr   <= 0;
-      vif.hwrite  <= 0;
+      // haddr NOT zeroed here - still holds txn.addr
+      // RTL WWAIT latch fires at next posedge: captures haddr_temp=txn.addr
 
-      // Wait for hready=1 on posedge (bridge releases AHB master)
+      // Wait for hready=1
       @(posedge vif.hclk);
       while (!vif.hready) @(posedge vif.hclk);
+
+      // Now safe to zero - transfer complete
+      @(negedge vif.hclk);
+      vif.haddr  <= 0;
+      vif.hwdata <= 0;
+      vif.hwrite <= 0;
 
       `uvm_info("AHB_DRV",
         $sformatf("WRITE done: addr=0x%08h data=0x%08h",
@@ -111,27 +137,46 @@ package ahb_agent_pkg;
 
     // -------------------------------------------------------------------------
     // drive_read
+    //
+    // For reads, RTL uses live haddr in READ and RENABLE states.
+    // So hold haddr stable until hready=1.
+    //
+    //   negedge 1: hselapb=1, haddr=addr, hwrite=0, htrans=NONSEQ
+    //              → posedge: FSM IDLE→READ, paddr=haddr captured
+    //
+    //   negedge 2: hselapb=0, htrans=IDLE
+    //              haddr STILL HELD
+    //              → posedge: FSM READ→RENABLE, paddr=haddr still valid
+    //
+    //   posedge when hready=1: hrdata valid, capture it
+    //
+    //   negedge after hready: zero haddr
     // -------------------------------------------------------------------------
     task drive_read(ahb_apb_txn txn);
-      // Address phase
+      // Cycle 1: Address phase
       @(negedge vif.hclk);
       vif.hselapb <= 1;
-      vif.haddr   <= txn.addr;
+      vif.haddr   <= txn.addr;   // drive address
       vif.hwrite  <= 0;
       vif.htrans  <= HTRANS_NONSEQ;
       vif.hwdata  <= 0;
 
-      // Deassert after address phase
+      // Cycle 2: Deassert select but HOLD address
       @(negedge vif.hclk);
       vif.hselapb <= 0;
       vif.htrans  <= HTRANS_IDLE;
-      vif.haddr   <= 0;
+      // haddr NOT zeroed - RTL READ/RENABLE states use live haddr for paddr
 
       // Wait for hready=1 - hrdata valid at this posedge
       @(posedge vif.hclk);
       while (!vif.hready) @(posedge vif.hclk);
 
       txn.data = vif.hrdata;
+
+      // Now safe to zero
+      @(negedge vif.hclk);
+      vif.haddr  <= 0;
+      vif.hwrite <= 0;
 
       `uvm_info("AHB_DRV",
         $sformatf("READ done: addr=0x%08h hrdata=0x%08h",
@@ -142,12 +187,6 @@ package ahb_agent_pkg;
 
   //===========================================================================
   // AHB MONITOR
-  //
-  // Samples directly from interface signals at posedge+#1 settle time.
-  // Three-step state machine:
-  //   Step 1: detect address phase (hselapb=1, htrans=NONSEQ)
-  //   Step 2: capture hwdata one cycle later (data phase)
-  //   Step 3: build txn when hready=1
   //===========================================================================
   class ahb_monitor extends uvm_monitor;
     `uvm_component_utils(ahb_monitor)
@@ -183,9 +222,9 @@ package ahb_agent_pkg;
 
       forever begin
         @(posedge vif.hclk);
-        #1; // small settle after posedge
+        #1;
 
-        // Step 1: address phase detection
+        // Step 1: address phase
         if (vif.hselapb && (vif.htrans == HTRANS_NONSEQ)) begin
           saved_addr      = vif.haddr;
           saved_write     = vif.hwrite;
@@ -193,14 +232,14 @@ package ahb_agent_pkg;
           data_phase_seen = 0;
           saved_data      = 0;
         end
-        // Step 2: data phase - one cycle after address phase
+        // Step 2: data phase (cycle after address)
         else if (addr_phase_seen && !data_phase_seen) begin
           if (saved_write)
             saved_data = vif.hwdata;
           data_phase_seen = 1;
         end
 
-        // Step 3: completion - hready=1
+        // Step 3: completion
         if (addr_phase_seen && vif.hready) begin
           txn            = ahb_apb_txn::type_id::create("ahb_mon_txn");
           txn.addr       = saved_addr;
