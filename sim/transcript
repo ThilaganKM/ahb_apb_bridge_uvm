@@ -1,0 +1,646 @@
+# vsim -c -coverage tb_uvm_top "+UVM_TESTNAME=bridge_rand_test" "+UVM_VERBOSITY=UVM_MEDIUM" -voptargs="+acc" -do "run -all; coverage save -codeAll bridge.ucdb; quit" 
+# Start time: 14:34:44 on Mar 16,2026
+# ** Note: (vsim-8009) Loading existing optimized design _opt
+# //  Questa Sim-64
+# //  Version 2019.2 linux_x86_64 Apr 16 2019
+# //
+# //  Copyright 1991-2019 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.ahb_apb_if(fast)
+# Loading mtiUvm.uvm_pkg
+# Loading work.ahb_apb_txn_pkg(fast)
+# Loading work.apb_agent_pkg(fast)
+# Loading work.ahb_agent_pkg(fast)
+# Loading work.bridge_env_pkg(fast)
+# Loading work.bridge_test_pkg(fast)
+# Loading work.tb_uvm_top_sv_unit(fast)
+# Loading mtiUvm.questa_uvm_pkg(fast)
+# Loading work.tb_uvm_top(fast)
+# Loading work.ahb_apb_if(fast)
+# Loading work.ahb_apb_bridge(fast)
+# Loading /home/cad/eda/Questa_2019/questasim/uvm-1.1d/linux_x86_64/uvm_dpi.so
+# ** Warning: (vsim-8634) Code was not compiled with coverage options.
+# run -all
+# ----------------------------------------------------------------
+# UVM-1.1d
+# (C) 2007-2013 Mentor Graphics Corporation
+# (C) 2007-2013 Cadence Design Systems, Inc.
+# (C) 2006-2013 Synopsys, Inc.
+# (C) 2011-2013 Cypress Semiconductor Corp.
+# ----------------------------------------------------------------
+# 
+#   ***********       IMPORTANT RELEASE NOTES         ************
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_NO_DEPRECATED undefined.
+#   See http://www.eda.org/svdb/view.php?id=3313 for more details.
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_OBJECT_MUST_HAVE_CONSTRUCTOR undefined.
+#   See http://www.eda.org/svdb/view.php?id=3770 for more details.
+# 
+#       (Specify +UVM_NO_RELNOTES to turn off this notice)
+# 
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(277) @ 0: reporter [Questa UVM] QUESTA_UVM-1.2.3
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(278) @ 0: reporter [Questa UVM]  questa_uvm::init(+struct)
+# UVM_INFO @ 0: reporter [RNTST] Running test bridge_rand_test...
+# UVM_WARNING @ 0: reporter [TYPDUP] Original and override type arguments are identical: ahb_agent
+# UVM_WARNING @ 0: reporter [TYPDUP] Original and override type arguments are identical: apb_agent
+# UVM_INFO @ 0: reporter [UVMTOP] UVM testbench topology:
+# ------------------------------------------------------------------
+# Name                       Type                        Size  Value
+# ------------------------------------------------------------------
+# uvm_test_top               bridge_rand_test            -     @471 
+#   env                      bridge_env                  -     @478 
+#     ahb_agnt               ahb_agent                   -     @485 
+#       ap                   uvm_analysis_port           -     @529 
+#       drv                  ahb_driver                  -     @646 
+#         rsp_port           uvm_analysis_port           -     @661 
+#         seq_item_port      uvm_seq_item_pull_port      -     @653 
+#       mon                  ahb_monitor                 -     @522 
+#         ap                 uvm_analysis_port           -     @670 
+#       seqr                 ahb_sequencer               -     @537 
+#         rsp_export         uvm_analysis_export         -     @544 
+#         seq_item_export    uvm_seq_item_pull_imp       -     @638 
+#         arbitration_queue  array                       0     -    
+#         lock_queue         array                       0     -    
+#         num_last_reqs      integral                    32    'd1  
+#         num_last_rsps      integral                    32    'd1  
+#     apb_agnt               apb_agent                   -     @492 
+#       ap                   uvm_analysis_port           -     @699 
+#       mon                  apb_monitor                 -     @685 
+#         ap                 uvm_analysis_port           -     @707 
+#       slave                apb_slave_model             -     @692 
+#     coverage               bridge_coverage             -     @506 
+#       analysis_imp         uvm_analysis_imp            -     @513 
+#     scoreboard             bridge_scoreboard           -     @499 
+#       ahb_fifo             uvm_tlm_analysis_fifo #(T)  -     @717 
+#         analysis_export    uvm_analysis_imp            -     @756 
+#         get_ap             uvm_analysis_port           -     @748 
+#         get_peek_export    uvm_get_peek_imp            -     @732 
+#         put_ap             uvm_analysis_port           -     @740 
+#         put_export         uvm_put_imp                 -     @724 
+#       apb_fifo             uvm_tlm_analysis_fifo #(T)  -     @764 
+#         analysis_export    uvm_analysis_imp            -     @803 
+#         get_ap             uvm_analysis_port           -     @795 
+#         get_peek_export    uvm_get_peek_imp            -     @779 
+#         put_ap             uvm_analysis_port           -     @787 
+#         put_export         uvm_put_imp                 -     @771 
+# ------------------------------------------------------------------
+# 
+# UVM_INFO ../tb/tests/bridge_test_pkg.sv(493) @ 0: uvm_test_top [RAND_TEST] Starting random test
+# UVM_INFO ../tb/tests/bridge_test_pkg.sv(280) @ 0: uvm_test_top.env.ahb_agnt.seqr@@rseq [RAND_SEQ] Random sequence: count=100
+# UVM_INFO ../tb/top/tb_uvm_top.sv(128) @ 46000: reporter [TOP] Reset released - starting UVM
+# [TOP MON] t=85000 psel=1 penable=0 paddr=0x000000bc pwdata=0x0d429413
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 86000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000bc data=0x0d429413 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 95000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000bc data=0x0d429413 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=95000 psel=1 penable=1 paddr=0x000000bc pwdata=0x0d429413
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 95000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000bc data=0x0d429413
+# [TOP MON] t=165000 psel=1 penable=0 paddr=0x00000014 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 166000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000014 data=0xa5a50005 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 175000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000014 data=0xa5a50005 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=175000 psel=1 penable=1 paddr=0x00000014 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 175000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000014 data=0xa5a50005
+# [TOP MON] t=305000 psel=1 penable=0 paddr=0x00000040 pwdata=0x9894f8f0
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 306000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0x9894f8f0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 315000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0x9894f8f0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=315000 psel=1 penable=1 paddr=0x00000040 pwdata=0x9894f8f0
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 315000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000040 data=0x9894f8f0
+# [TOP MON] t=345000 psel=1 penable=0 paddr=0x00000084 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 346000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000084 data=0xa5a50021 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 355000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000084 data=0xa5a50021 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=355000 psel=1 penable=1 paddr=0x00000084 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 355000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000084 data=0xa5a50021
+# [TOP MON] t=425000 psel=1 penable=0 paddr=0x000000a0 pwdata=0xafddea83
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 426000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000a0 data=0xafddea83 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 435000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000a0 data=0xafddea83 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=435000 psel=1 penable=1 paddr=0x000000a0 pwdata=0xafddea83
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 435000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000a0 data=0xafddea83
+# [TOP MON] t=475000 psel=1 penable=0 paddr=0x00000008 pwdata=0x21cd5076
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 476000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000008 data=0x21cd5076 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 485000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000008 data=0x21cd5076 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=485000 psel=1 penable=1 paddr=0x00000008 pwdata=0x21cd5076
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 485000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000008 data=0x21cd5076
+# [TOP MON] t=585000 psel=1 penable=0 paddr=0x00000030 pwdata=0x531e484d
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 586000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000030 data=0x531e484d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 595000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000030 data=0x531e484d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=595000 psel=1 penable=1 paddr=0x00000030 pwdata=0x531e484d
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 595000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000030 data=0x531e484d
+# [TOP MON] t=625000 psel=1 penable=0 paddr=0x000000d4 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 626000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000d4 data=0xa5a50035 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 635000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000d4 data=0xa5a50035 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=635000 psel=1 penable=1 paddr=0x000000d4 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 635000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000d4 data=0xa5a50035
+# [TOP MON] t=725000 psel=1 penable=0 paddr=0x00000034 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 726000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000034 data=0xa5a5000d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 735000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000034 data=0xa5a5000d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=735000 psel=1 penable=1 paddr=0x00000034 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 735000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000034 data=0xa5a5000d
+# [TOP MON] t=825000 psel=1 penable=0 paddr=0x000000f0 pwdata=0x9aad0cc8
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 826000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000f0 data=0x9aad0cc8 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 835000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000f0 data=0x9aad0cc8 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=835000 psel=1 penable=1 paddr=0x000000f0 pwdata=0x9aad0cc8
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 835000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000f0 data=0x9aad0cc8
+# [TOP MON] t=955000 psel=1 penable=0 paddr=0x0000004c pwdata=0xbb58b1c4
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 956000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x0000004c data=0xbb58b1c4 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 965000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x0000004c data=0xbb58b1c4 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=965000 psel=1 penable=1 paddr=0x0000004c pwdata=0xbb58b1c4
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 965000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x0000004c data=0xbb58b1c4
+# [TOP MON] t=1035000 psel=1 penable=0 paddr=0x00000000 pwdata=0xb41d9834
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1036000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000000 data=0xb41d9834 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1045000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000000 data=0xb41d9834 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1045000 psel=1 penable=1 paddr=0x00000000 pwdata=0xb41d9834
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1045000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000000 data=0xb41d9834
+# [TOP MON] t=1085000 psel=1 penable=0 paddr=0x00000078 pwdata=0x2e549d31
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1086000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000078 data=0x2e549d31 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1095000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000078 data=0x2e549d31 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1095000 psel=1 penable=1 paddr=0x00000078 pwdata=0x2e549d31
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1095000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000078 data=0x2e549d31
+# [TOP MON] t=1175000 psel=1 penable=0 paddr=0x00000074 pwdata=0xeff6ae11
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1176000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000074 data=0xeff6ae11 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1185000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000074 data=0xeff6ae11 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1185000 psel=1 penable=1 paddr=0x00000074 pwdata=0xeff6ae11
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1185000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000074 data=0xeff6ae11
+# [TOP MON] t=1315000 psel=1 penable=0 paddr=0x000000fc pwdata=0x3ac12aba
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1316000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000fc data=0x3ac12aba trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1325000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000fc data=0x3ac12aba trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1325000 psel=1 penable=1 paddr=0x000000fc pwdata=0x3ac12aba
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1325000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000fc data=0x3ac12aba
+# [TOP MON] t=1425000 psel=1 penable=0 paddr=0x000000a8 pwdata=0xe558436e
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1426000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000a8 data=0xe558436e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1435000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000a8 data=0xe558436e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1435000 psel=1 penable=1 paddr=0x000000a8 pwdata=0xe558436e
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1435000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000a8 data=0xe558436e
+# [TOP MON] t=1495000 psel=1 penable=0 paddr=0x00000038 pwdata=0x85be27ca
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1496000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000038 data=0x85be27ca trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1505000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000038 data=0x85be27ca trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1505000 psel=1 penable=1 paddr=0x00000038 pwdata=0x85be27ca
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1505000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000038 data=0x85be27ca
+# [TOP MON] t=1545000 psel=1 penable=0 paddr=0x00000004 pwdata=0x5fe82111
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1546000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000004 data=0x5fe82111 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1555000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000004 data=0x5fe82111 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1555000 psel=1 penable=1 paddr=0x00000004 pwdata=0x5fe82111
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1555000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000004 data=0x5fe82111
+# [TOP MON] t=1695000 psel=1 penable=0 paddr=0x00000050 pwdata=0x57513bf8
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1696000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000050 data=0x57513bf8 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1705000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000050 data=0x57513bf8 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1705000 psel=1 penable=1 paddr=0x00000050 pwdata=0x57513bf8
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1705000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000050 data=0x57513bf8
+# [TOP MON] t=1775000 psel=1 penable=0 paddr=0x00000058 pwdata=0xa38dd336
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1776000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000058 data=0xa38dd336 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1785000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000058 data=0xa38dd336 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1785000 psel=1 penable=1 paddr=0x00000058 pwdata=0xa38dd336
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1785000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000058 data=0xa38dd336
+# [TOP MON] t=1885000 psel=1 penable=0 paddr=0x00000080 pwdata=0x1171afbe
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1886000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000080 data=0x1171afbe trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1895000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000080 data=0x1171afbe trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1895000 psel=1 penable=1 paddr=0x00000080 pwdata=0x1171afbe
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1895000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000080 data=0x1171afbe
+# [TOP MON] t=1965000 psel=1 penable=0 paddr=0x000000a8 pwdata=0xd297d371
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 1966000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000a8 data=0xd297d371 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 1975000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000a8 data=0xd297d371 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=1975000 psel=1 penable=1 paddr=0x000000a8 pwdata=0xd297d371
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 1975000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000a8 data=0xd297d371
+# [TOP MON] t=2115000 psel=1 penable=0 paddr=0x00000028 pwdata=0x5ed70e43
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2116000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000028 data=0x5ed70e43 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2125000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000028 data=0x5ed70e43 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2125000 psel=1 penable=1 paddr=0x00000028 pwdata=0x5ed70e43
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2125000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000028 data=0x5ed70e43
+# [TOP MON] t=2165000 psel=1 penable=0 paddr=0x00000064 pwdata=0x505c9ad8
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2166000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000064 data=0x505c9ad8 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2175000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000064 data=0x505c9ad8 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2175000 psel=1 penable=1 paddr=0x00000064 pwdata=0x505c9ad8
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2175000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000064 data=0x505c9ad8
+# [TOP MON] t=2275000 psel=1 penable=0 paddr=0x000000c4 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2276000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000c4 data=0xa5a50031 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2285000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000c4 data=0xa5a50031 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2285000 psel=1 penable=1 paddr=0x000000c4 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2285000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000c4 data=0xa5a50031
+# [TOP MON] t=2375000 psel=1 penable=0 paddr=0x0000001c pwdata=0x223c456e
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2376000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x0000001c data=0x223c456e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2385000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x0000001c data=0x223c456e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2385000 psel=1 penable=1 paddr=0x0000001c pwdata=0x223c456e
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2385000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x0000001c data=0x223c456e
+# [TOP MON] t=2455000 psel=1 penable=0 paddr=0x00000088 pwdata=0x84b4cdfa
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2456000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000088 data=0x84b4cdfa trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2465000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000088 data=0x84b4cdfa trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2465000 psel=1 penable=1 paddr=0x00000088 pwdata=0x84b4cdfa
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2465000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000088 data=0x84b4cdfa
+# [TOP MON] t=2575000 psel=1 penable=0 paddr=0x00000054 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2576000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000054 data=0xa5a50015 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2585000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000054 data=0xa5a50015 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2585000 psel=1 penable=1 paddr=0x00000054 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2585000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000054 data=0xa5a50015
+# [TOP MON] t=2685000 psel=1 penable=0 paddr=0x000000ec pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2686000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000ec data=0xa5a5003b trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2695000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000ec data=0xa5a5003b trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2695000 psel=1 penable=1 paddr=0x000000ec pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2695000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000ec data=0xa5a5003b
+# [TOP MON] t=2785000 psel=1 penable=0 paddr=0x0000004c pwdata=0x7b42a97a
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2786000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x0000004c data=0x7b42a97a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2795000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x0000004c data=0x7b42a97a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2795000 psel=1 penable=1 paddr=0x0000004c pwdata=0x7b42a97a
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2795000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x0000004c data=0x7b42a97a
+# [TOP MON] t=2895000 psel=1 penable=0 paddr=0x00000004 pwdata=0x1ca62295
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2896000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000004 data=0x1ca62295 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2905000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000004 data=0x1ca62295 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2905000 psel=1 penable=1 paddr=0x00000004 pwdata=0x1ca62295
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2905000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000004 data=0x1ca62295
+# [TOP MON] t=2935000 psel=1 penable=0 paddr=0x00000014 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 2936000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000014 data=0xa5a50005 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 2945000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000014 data=0xa5a50005 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=2945000 psel=1 penable=1 paddr=0x00000014 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 2945000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000014 data=0xa5a50005
+# [TOP MON] t=3015000 psel=1 penable=0 paddr=0x00000048 pwdata=0x43e6dd15
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3016000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000048 data=0x43e6dd15 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3025000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000048 data=0x43e6dd15 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3025000 psel=1 penable=1 paddr=0x00000048 pwdata=0x43e6dd15
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3025000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000048 data=0x43e6dd15
+# [TOP MON] t=3075000 psel=1 penable=0 paddr=0x000000a0 pwdata=0x49b201b0
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3076000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000a0 data=0x49b201b0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3085000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000a0 data=0x49b201b0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3085000 psel=1 penable=1 paddr=0x000000a0 pwdata=0x49b201b0
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3085000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000a0 data=0x49b201b0
+# [TOP MON] t=3215000 psel=1 penable=0 paddr=0x00000048 pwdata=0xb33367d3
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3216000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000048 data=0xb33367d3 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3225000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000048 data=0xb33367d3 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3225000 psel=1 penable=1 paddr=0x00000048 pwdata=0xb33367d3
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3225000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000048 data=0xb33367d3
+# [TOP MON] t=3285000 psel=1 penable=0 paddr=0x00000010 pwdata=0x8980336a
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3286000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000010 data=0x8980336a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3295000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000010 data=0x8980336a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3295000 psel=1 penable=1 paddr=0x00000010 pwdata=0x8980336a
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3295000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000010 data=0x8980336a
+# [TOP MON] t=3335000 psel=1 penable=0 paddr=0x000000c0 pwdata=0xf72e0e4a
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3336000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000c0 data=0xf72e0e4a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3345000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000c0 data=0xf72e0e4a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3345000 psel=1 penable=1 paddr=0x000000c0 pwdata=0xf72e0e4a
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3345000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000c0 data=0xf72e0e4a
+# [TOP MON] t=3395000 psel=1 penable=0 paddr=0x00000018 pwdata=0xc8be1bb9
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3396000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000018 data=0xc8be1bb9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3405000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000018 data=0xc8be1bb9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3405000 psel=1 penable=1 paddr=0x00000018 pwdata=0xc8be1bb9
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3405000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000018 data=0xc8be1bb9
+# [TOP MON] t=3525000 psel=1 penable=0 paddr=0x00000040 pwdata=0x90cff57e
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3526000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0x90cff57e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3535000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0x90cff57e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3535000 psel=1 penable=1 paddr=0x00000040 pwdata=0x90cff57e
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3535000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000040 data=0x90cff57e
+# [TOP MON] t=3595000 psel=1 penable=0 paddr=0x000000b0 pwdata=0xda5b683e
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3596000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000b0 data=0xda5b683e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3605000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000b0 data=0xda5b683e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3605000 psel=1 penable=1 paddr=0x000000b0 pwdata=0xda5b683e
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3605000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000b0 data=0xda5b683e
+# [TOP MON] t=3645000 psel=1 penable=0 paddr=0x00000040 pwdata=0xc4e38283
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3646000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0xc4e38283 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3655000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0xc4e38283 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3655000 psel=1 penable=1 paddr=0x00000040 pwdata=0xc4e38283
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3655000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000040 data=0xc4e38283
+# [TOP MON] t=3685000 psel=1 penable=0 paddr=0x00000030 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3686000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000030 data=0x531e484d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3695000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000030 data=0x531e484d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3695000 psel=1 penable=1 paddr=0x00000030 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3695000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000030 data=0x531e484d
+# [TOP MON] t=3755000 psel=1 penable=0 paddr=0x00000038 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3756000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000038 data=0x85be27ca trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3765000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000038 data=0x85be27ca trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3765000 psel=1 penable=1 paddr=0x00000038 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3765000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000038 data=0x85be27ca
+# [TOP MON] t=3895000 psel=1 penable=0 paddr=0x000000f8 pwdata=0x03299ada
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3896000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000f8 data=0x03299ada trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3905000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000f8 data=0x03299ada trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3905000 psel=1 penable=1 paddr=0x000000f8 pwdata=0x03299ada
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3905000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000f8 data=0x03299ada
+# [TOP MON] t=3965000 psel=1 penable=0 paddr=0x00000084 pwdata=0x02e202ba
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 3966000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000084 data=0x02e202ba trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 3975000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000084 data=0x02e202ba trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=3975000 psel=1 penable=1 paddr=0x00000084 pwdata=0x02e202ba
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 3975000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000084 data=0x02e202ba
+# [TOP MON] t=4105000 psel=1 penable=0 paddr=0x00000058 pwdata=0x00fc9209
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4106000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000058 data=0x00fc9209 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4115000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000058 data=0x00fc9209 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4115000 psel=1 penable=1 paddr=0x00000058 pwdata=0x00fc9209
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4115000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000058 data=0x00fc9209
+# [TOP MON] t=4235000 psel=1 penable=0 paddr=0x000000d4 pwdata=0x3db0ca11
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4236000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000d4 data=0x3db0ca11 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4245000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000d4 data=0x3db0ca11 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4245000 psel=1 penable=1 paddr=0x000000d4 pwdata=0x3db0ca11
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4245000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000d4 data=0x3db0ca11
+# [TOP MON] t=4275000 psel=1 penable=0 paddr=0x000000b8 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4276000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000b8 data=0xa5a5002e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4285000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000b8 data=0xa5a5002e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4285000 psel=1 penable=1 paddr=0x000000b8 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4285000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000b8 data=0xa5a5002e
+# [TOP MON] t=4395000 psel=1 penable=0 paddr=0x00000050 pwdata=0x5f3bf558
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4396000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000050 data=0x5f3bf558 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4405000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000050 data=0x5f3bf558 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4405000 psel=1 penable=1 paddr=0x00000050 pwdata=0x5f3bf558
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4405000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000050 data=0x5f3bf558
+# [TOP MON] t=4535000 psel=1 penable=0 paddr=0x000000d0 pwdata=0xd310793f
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4536000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000d0 data=0xd310793f trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4545000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000d0 data=0xd310793f trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4545000 psel=1 penable=1 paddr=0x000000d0 pwdata=0xd310793f
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4545000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000d0 data=0xd310793f
+# [TOP MON] t=4575000 psel=1 penable=0 paddr=0x00000008 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4576000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000008 data=0x21cd5076 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4585000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000008 data=0x21cd5076 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4585000 psel=1 penable=1 paddr=0x00000008 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4585000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000008 data=0x21cd5076
+# [TOP MON] t=4665000 psel=1 penable=0 paddr=0x000000a0 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4666000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000a0 data=0x49b201b0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4675000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000a0 data=0x49b201b0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4675000 psel=1 penable=1 paddr=0x000000a0 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4675000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000a0 data=0x49b201b0
+# [TOP MON] t=4765000 psel=1 penable=0 paddr=0x000000a8 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4766000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000a8 data=0xd297d371 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4775000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000a8 data=0xd297d371 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4775000 psel=1 penable=1 paddr=0x000000a8 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4775000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000a8 data=0xd297d371
+# [TOP MON] t=4815000 psel=1 penable=0 paddr=0x00000054 pwdata=0xd657b9ee
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4816000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000054 data=0xd657b9ee trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4825000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000054 data=0xd657b9ee trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4825000 psel=1 penable=1 paddr=0x00000054 pwdata=0xd657b9ee
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4825000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000054 data=0xd657b9ee
+# [TOP MON] t=4915000 psel=1 penable=0 paddr=0x00000010 pwdata=0xaf1393ac
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4916000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000010 data=0xaf1393ac trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4925000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000010 data=0xaf1393ac trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4925000 psel=1 penable=1 paddr=0x00000010 pwdata=0xaf1393ac
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4925000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000010 data=0xaf1393ac
+# [TOP MON] t=4965000 psel=1 penable=0 paddr=0x00000088 pwdata=0xdc6014e9
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 4966000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000088 data=0xdc6014e9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 4975000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000088 data=0xdc6014e9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=4975000 psel=1 penable=1 paddr=0x00000088 pwdata=0xdc6014e9
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 4975000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000088 data=0xdc6014e9
+# [TOP MON] t=5045000 psel=1 penable=0 paddr=0x00000000 pwdata=0xe470bef0
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5046000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000000 data=0xe470bef0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5055000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000000 data=0xe470bef0 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5055000 psel=1 penable=1 paddr=0x00000000 pwdata=0xe470bef0
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5055000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000000 data=0xe470bef0
+# [TOP MON] t=5175000 psel=1 penable=0 paddr=0x000000ec pwdata=0x28b2db49
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5176000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000ec data=0x28b2db49 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5185000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000ec data=0x28b2db49 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5185000 psel=1 penable=1 paddr=0x000000ec pwdata=0x28b2db49
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5185000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000ec data=0x28b2db49
+# [TOP MON] t=5325000 psel=1 penable=0 paddr=0x00000020 pwdata=0x76db1656
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5326000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000020 data=0x76db1656 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5335000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000020 data=0x76db1656 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5335000 psel=1 penable=1 paddr=0x00000020 pwdata=0x76db1656
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5335000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000020 data=0x76db1656
+# [TOP MON] t=5405000 psel=1 penable=0 paddr=0x0000005c pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5406000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x0000005c data=0xa5a50017 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5415000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x0000005c data=0xa5a50017 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5415000 psel=1 penable=1 paddr=0x0000005c pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5415000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x0000005c data=0xa5a50017
+# [TOP MON] t=5545000 psel=1 penable=0 paddr=0x00000068 pwdata=0xc957932e
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5546000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000068 data=0xc957932e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5555000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000068 data=0xc957932e trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5555000 psel=1 penable=1 paddr=0x00000068 pwdata=0xc957932e
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5555000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000068 data=0xc957932e
+# [TOP MON] t=5665000 psel=1 penable=0 paddr=0x00000098 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5666000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000098 data=0xa5a50026 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5675000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000098 data=0xa5a50026 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5675000 psel=1 penable=1 paddr=0x00000098 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5675000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000098 data=0xa5a50026
+# [TOP MON] t=5795000 psel=1 penable=0 paddr=0x00000074 pwdata=0xd53cda26
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5796000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000074 data=0xd53cda26 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5805000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000074 data=0xd53cda26 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5805000 psel=1 penable=1 paddr=0x00000074 pwdata=0xd53cda26
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5805000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000074 data=0xd53cda26
+# [TOP MON] t=5945000 psel=1 penable=0 paddr=0x000000ec pwdata=0xd7a41cf7
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 5946000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000ec data=0xd7a41cf7 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 5955000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000ec data=0xd7a41cf7 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=5955000 psel=1 penable=1 paddr=0x000000ec pwdata=0xd7a41cf7
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 5955000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000ec data=0xd7a41cf7
+# [TOP MON] t=6035000 psel=1 penable=0 paddr=0x00000034 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6036000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000034 data=0xa5a5000d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6045000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000034 data=0xa5a5000d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6045000 psel=1 penable=1 paddr=0x00000034 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6045000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000034 data=0xa5a5000d
+# [TOP MON] t=6175000 psel=1 penable=0 paddr=0x0000002c pwdata=0x575572bf
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6176000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x0000002c data=0x575572bf trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6185000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x0000002c data=0x575572bf trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6185000 psel=1 penable=1 paddr=0x0000002c pwdata=0x575572bf
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6185000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x0000002c data=0x575572bf
+# [TOP MON] t=6305000 psel=1 penable=0 paddr=0x00000038 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6306000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000038 data=0x85be27ca trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6315000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000038 data=0x85be27ca trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6315000 psel=1 penable=1 paddr=0x00000038 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6315000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000038 data=0x85be27ca
+# [TOP MON] t=6415000 psel=1 penable=0 paddr=0x000000f4 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6416000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000f4 data=0xa5a5003d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6425000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000f4 data=0xa5a5003d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6425000 psel=1 penable=1 paddr=0x000000f4 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6425000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000f4 data=0xa5a5003d
+# [TOP MON] t=6535000 psel=1 penable=0 paddr=0x00000038 pwdata=0xaa6dc2ab
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6536000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000038 data=0xaa6dc2ab trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6545000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000038 data=0xaa6dc2ab trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6545000 psel=1 penable=1 paddr=0x00000038 pwdata=0xaa6dc2ab
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6545000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000038 data=0xaa6dc2ab
+# [TOP MON] t=6605000 psel=1 penable=0 paddr=0x00000040 pwdata=0x0d96439d
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6606000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0x0d96439d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6615000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000040 data=0x0d96439d trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6615000 psel=1 penable=1 paddr=0x00000040 pwdata=0x0d96439d
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6615000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000040 data=0x0d96439d
+# [TOP MON] t=6655000 psel=1 penable=0 paddr=0x0000003c pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6656000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x0000003c data=0xa5a5000f trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6665000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x0000003c data=0xa5a5000f trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6665000 psel=1 penable=1 paddr=0x0000003c pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6665000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x0000003c data=0xa5a5000f
+# [TOP MON] t=6805000 psel=1 penable=0 paddr=0x00000004 pwdata=0x6e3abbf9
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6806000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000004 data=0x6e3abbf9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6815000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000004 data=0x6e3abbf9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6815000 psel=1 penable=1 paddr=0x00000004 pwdata=0x6e3abbf9
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6815000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000004 data=0x6e3abbf9
+# [TOP MON] t=6885000 psel=1 penable=0 paddr=0x000000a4 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6886000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000a4 data=0xa5a50029 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6895000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000a4 data=0xa5a50029 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6895000 psel=1 penable=1 paddr=0x000000a4 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6895000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000a4 data=0xa5a50029
+# [TOP MON] t=6965000 psel=1 penable=0 paddr=0x00000080 pwdata=0xd01d8328
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 6966000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000080 data=0xd01d8328 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 6975000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000080 data=0xd01d8328 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=6975000 psel=1 penable=1 paddr=0x00000080 pwdata=0xd01d8328
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 6975000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000080 data=0xd01d8328
+# [TOP MON] t=7085000 psel=1 penable=0 paddr=0x00000020 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7086000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000020 data=0x76db1656 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7095000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000020 data=0x76db1656 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7095000 psel=1 penable=1 paddr=0x00000020 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7095000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000020 data=0x76db1656
+# [TOP MON] t=7175000 psel=1 penable=0 paddr=0x000000a0 pwdata=0xf36a4b9a
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7176000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000a0 data=0xf36a4b9a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7185000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000a0 data=0xf36a4b9a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7185000 psel=1 penable=1 paddr=0x000000a0 pwdata=0xf36a4b9a
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7185000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000a0 data=0xf36a4b9a
+# [TOP MON] t=7295000 psel=1 penable=0 paddr=0x000000c4 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7296000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000c4 data=0xa5a50031 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7305000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000c4 data=0xa5a50031 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7305000 psel=1 penable=1 paddr=0x000000c4 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7305000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000c4 data=0xa5a50031
+# [TOP MON] t=7355000 psel=1 penable=0 paddr=0x000000b8 pwdata=0x060436ab
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7356000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000b8 data=0x060436ab trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7365000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000b8 data=0x060436ab trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7365000 psel=1 penable=1 paddr=0x000000b8 pwdata=0x060436ab
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7365000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000b8 data=0x060436ab
+# [TOP MON] t=7415000 psel=1 penable=0 paddr=0x000000ac pwdata=0x2235ee01
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7416000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000ac data=0x2235ee01 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7425000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000ac data=0x2235ee01 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7425000 psel=1 penable=1 paddr=0x000000ac pwdata=0x2235ee01
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7425000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000ac data=0x2235ee01
+# [TOP MON] t=7515000 psel=1 penable=0 paddr=0x0000003c pwdata=0x0b271fbc
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7516000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x0000003c data=0x0b271fbc trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7525000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x0000003c data=0x0b271fbc trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7525000 psel=1 penable=1 paddr=0x0000003c pwdata=0x0b271fbc
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7525000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x0000003c data=0x0b271fbc
+# [TOP MON] t=7565000 psel=1 penable=0 paddr=0x00000060 pwdata=0xa838a468
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7566000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000060 data=0xa838a468 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7575000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000060 data=0xa838a468 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7575000 psel=1 penable=1 paddr=0x00000060 pwdata=0xa838a468
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7575000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000060 data=0xa838a468
+# [TOP MON] t=7695000 psel=1 penable=0 paddr=0x000000a4 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7696000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000a4 data=0xa5a50029 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7705000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000a4 data=0xa5a50029 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7705000 psel=1 penable=1 paddr=0x000000a4 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7705000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000a4 data=0xa5a50029
+# [TOP MON] t=7845000 psel=1 penable=0 paddr=0x00000058 pwdata=0x20028084
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7846000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000058 data=0x20028084 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7855000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000058 data=0x20028084 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7855000 psel=1 penable=1 paddr=0x00000058 pwdata=0x20028084
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7855000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000058 data=0x20028084
+# [TOP MON] t=7915000 psel=1 penable=0 paddr=0x00000094 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7916000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000094 data=0xa5a50025 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7925000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000094 data=0xa5a50025 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7925000 psel=1 penable=1 paddr=0x00000094 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7925000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000094 data=0xa5a50025
+# [TOP MON] t=7965000 psel=1 penable=0 paddr=0x00000084 pwdata=0x69758836
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 7966000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000084 data=0x69758836 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 7975000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000084 data=0x69758836 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=7975000 psel=1 penable=1 paddr=0x00000084 pwdata=0x69758836
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 7975000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000084 data=0x69758836
+# [TOP MON] t=8095000 psel=1 penable=0 paddr=0x0000003c pwdata=0x3a352cf5
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8096000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x0000003c data=0x3a352cf5 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8105000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x0000003c data=0x3a352cf5 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8105000 psel=1 penable=1 paddr=0x0000003c pwdata=0x3a352cf5
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8105000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x0000003c data=0x3a352cf5
+# [TOP MON] t=8205000 psel=1 penable=0 paddr=0x0000009c pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8206000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x0000009c data=0xa5a50027 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8215000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x0000009c data=0xa5a50027 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8215000 psel=1 penable=1 paddr=0x0000009c pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8215000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x0000009c data=0xa5a50027
+# [TOP MON] t=8335000 psel=1 penable=0 paddr=0x000000ac pwdata=0xfbbb6078
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8336000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000ac data=0xfbbb6078 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8345000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000ac data=0xfbbb6078 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8345000 psel=1 penable=1 paddr=0x000000ac pwdata=0xfbbb6078
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8345000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000ac data=0xfbbb6078
+# [TOP MON] t=8475000 psel=1 penable=0 paddr=0x000000f8 pwdata=0x8a857916
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8476000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000f8 data=0x8a857916 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8485000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000f8 data=0x8a857916 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8485000 psel=1 penable=1 paddr=0x000000f8 pwdata=0x8a857916
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8485000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000f8 data=0x8a857916
+# [TOP MON] t=8605000 psel=1 penable=0 paddr=0x000000cc pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8606000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000cc data=0xa5a50033 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8615000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000cc data=0xa5a50033 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8615000 psel=1 penable=1 paddr=0x000000cc pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8615000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000cc data=0xa5a50033
+# [TOP MON] t=8665000 psel=1 penable=0 paddr=0x000000d0 pwdata=0x8c2f9013
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8666000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000d0 data=0x8c2f9013 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8675000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000d0 data=0x8c2f9013 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8675000 psel=1 penable=1 paddr=0x000000d0 pwdata=0x8c2f9013
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8675000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000d0 data=0x8c2f9013
+# [TOP MON] t=8795000 psel=1 penable=0 paddr=0x000000e4 pwdata=0xf904e421
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8796000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000e4 data=0xf904e421 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8805000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000e4 data=0xf904e421 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8805000 psel=1 penable=1 paddr=0x000000e4 pwdata=0xf904e421
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8805000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000e4 data=0xf904e421
+# [TOP MON] t=8905000 psel=1 penable=0 paddr=0x000000ac pwdata=0xbee42e45
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8906000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000ac data=0xbee42e45 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8915000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000ac data=0xbee42e45 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8915000 psel=1 penable=1 paddr=0x000000ac pwdata=0xbee42e45
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8915000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000ac data=0xbee42e45
+# [TOP MON] t=8965000 psel=1 penable=0 paddr=0x00000090 pwdata=0xc206bc88
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 8966000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000090 data=0xc206bc88 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 8975000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000090 data=0xc206bc88 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=8975000 psel=1 penable=1 paddr=0x00000090 pwdata=0xc206bc88
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 8975000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000090 data=0xc206bc88
+# [TOP MON] t=9015000 psel=1 penable=0 paddr=0x000000bc pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 9016000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000bc data=0x0d429413 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 9025000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000bc data=0x0d429413 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=9025000 psel=1 penable=1 paddr=0x000000bc pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 9025000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000bc data=0x0d429413
+# [TOP MON] t=9075000 psel=1 penable=0 paddr=0x000000e8 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 9076000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x000000e8 data=0xa5a5003a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 9085000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x000000e8 data=0xa5a5003a trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=9085000 psel=1 penable=1 paddr=0x000000e8 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 9085000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x000000e8 data=0xa5a5003a
+# [TOP MON] t=9125000 psel=1 penable=0 paddr=0x00000018 pwdata=0x00000000
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 9126000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_READ addr=0x00000018 data=0xc8be1bb9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 9135000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_READ addr=0x00000018 data=0xc8be1bb9 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=9135000 psel=1 penable=1 paddr=0x00000018 pwdata=0x00000000
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 9135000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_READ addr=0x00000018 data=0xc8be1bb9
+# [TOP MON] t=9195000 psel=1 penable=0 paddr=0x00000028 pwdata=0x15f06572
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 9196000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x00000028 data=0x15f06572 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 9205000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x00000028 data=0x15f06572 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=9205000 psel=1 penable=1 paddr=0x00000028 pwdata=0x15f06572
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 9205000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x00000028 data=0x15f06572
+# [TOP MON] t=9265000 psel=1 penable=0 paddr=0x0000001c pwdata=0xebd8ec94
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 9266000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x0000001c data=0xebd8ec94 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 9275000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x0000001c data=0xebd8ec94 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=9275000 psel=1 penable=1 paddr=0x0000001c pwdata=0xebd8ec94
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 9275000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x0000001c data=0xebd8ec94
+# [TOP MON] t=9335000 psel=1 penable=0 paddr=0x000000d0 pwdata=0xe92332e2
+# UVM_INFO ../tb/agent_ahb/ahb_agent_pkg.sv(251) @ 9336000: uvm_test_top.env.ahb_agnt.mon [AHB_MON] Captured: TXN: AHB_WRITE addr=0x000000d0 data=0xe92332e2 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# UVM_INFO ../tb/agent_apb/apb_agent_pkg.sv(123) @ 9345000: uvm_test_top.env.apb_agnt.mon [APB_MON] Captured: TXN: AHB_WRITE addr=0x000000d0 data=0xe92332e2 trans=HTRANS_NONSEQ resp=HRESP_OKAY delay=0
+# [TOP MON] t=9345000 psel=1 penable=1 paddr=0x000000d0 pwdata=0xe92332e2
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(85) @ 9345000: uvm_test_top.env.scoreboard [SBOARD] [PASS] AHB_WRITE addr=0x000000d0 data=0xe92332e2
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1267) @ 9410000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(194) @ 9410000: uvm_test_top.env.coverage [COV] ==========================================
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(195) @ 9410000: uvm_test_top.env.coverage [COV]        COVERAGE REPORT                   
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(196) @ 9410000: uvm_test_top.env.coverage [COV] ==========================================
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(197) @ 9410000: uvm_test_top.env.coverage [COV]   Transfer Type : 75.0%
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(200) @ 9410000: uvm_test_top.env.coverage [COV]   Address Range : 100.0%
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(203) @ 9410000: uvm_test_top.env.coverage [COV]   Data Corners  : 0.0%
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(206) @ 9410000: uvm_test_top.env.coverage [COV]   Cross Coverage: 100.0%
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(209) @ 9410000: uvm_test_top.env.coverage [COV]   Delay Coverage: 33.3%
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(212) @ 9410000: uvm_test_top.env.coverage [COV] ==========================================
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(99) @ 9410000: uvm_test_top.env.scoreboard [SBOARD] ==========================================
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(100) @ 9410000: uvm_test_top.env.scoreboard [SBOARD]        SCOREBOARD FINAL REPORT           
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(101) @ 9410000: uvm_test_top.env.scoreboard [SBOARD] ==========================================
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(102) @ 9410000: uvm_test_top.env.scoreboard [SBOARD]   Total  : 100
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(103) @ 9410000: uvm_test_top.env.scoreboard [SBOARD]   Passed : 100
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(104) @ 9410000: uvm_test_top.env.scoreboard [SBOARD]   Failed : 0
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(106) @ 9410000: uvm_test_top.env.scoreboard [SBOARD]   STATUS : ALL CHECKS PASSED
+# UVM_INFO ../tb/env/bridge_env_pkg.sv(110) @ 9410000: uvm_test_top.env.scoreboard [SBOARD] ==========================================
+# 
+# --- UVM Report Summary ---
+# 
+# ** Report counts by severity
+# UVM_INFO :  325
+# UVM_WARNING :    2
+# UVM_ERROR :    0
+# UVM_FATAL :    0
+# ** Report counts by id
+# [AHB_MON]   100
+# [APB_MON]   100
+# [COV]     9
+# [Questa UVM]     2
+# [RAND_SEQ]     1
+# [RAND_TEST]     1
+# [RNTST]     1
+# [SBOARD]   108
+# [TEST_DONE]     1
+# [TOP]     1
+# [TYPDUP]     2
+# [UVMTOP]     1
+# ** Note: $finish    : /home/cad/eda/Questa_2019/questasim/linux_x86_64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
+#    Time: 9410 ns  Iteration: 61  Instance: /tb_uvm_top
+# End time: 14:34:45 on Mar 16,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 1
