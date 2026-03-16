@@ -29,7 +29,6 @@ package apb_agent_pkg;
     endfunction
 
     task run_phase(uvm_phase phase);
-      // Initialize prdata
       @(posedge vif.hclk);
       wait (vif.hresetn === 1'b1);
 
@@ -91,37 +90,47 @@ package apb_agent_pkg;
       @(posedge vif.hclk);
       wait (vif.hresetn === 1'b1);
 
-      forever 
-      begin
-        // Sample at posedge 
-        @(posedge vif.hclk);
-        // Capture at ENABLE phase - psel=1, penable=1
-        if (vif.psel === 1'b1 && vif.penable === 1'b1) 
-        begin
-        // Capture immediately - no delay
-          begin
-            logic [31:0] cap_paddr  = vif.paddr;
-            logic [31:0] cap_pwdata = vif.pwdata;
-            logic [31:0] cap_prdata = vif.prdata;
-            logic        cap_pwrite = vif.pwrite;
-            
-            txn            = ahb_apb_txn::type_id::create("apb_mon_txn");
-            txn.addr       = cap_paddr;
-            txn.trans_type = HTRANS_NONSEQ;
-            txn.resp       = HRESP_OKAY;
+      txn = null;
 
-            if (cap_pwrite) begin
+      forever begin
+        @(posedge vif.hclk);
+
+        // APB SETUP phase: capture address/control
+        if (vif.psel === 1'b1 && vif.penable === 1'b0) begin
+          txn = ahb_apb_txn::type_id::create("apb_mon_txn", this);
+          txn.addr       = vif.paddr;
+          txn.trans_type = HTRANS_NONSEQ;
+          txn.resp       = HRESP_OKAY;
+
+          if (vif.pwrite)
             txn.kind = AHB_WRITE;
-            txn.data = cap_pwdata;
-            end else begin
+          else
             txn.kind = AHB_READ;
-            txn.data = cap_prdata;
-            end
-            `uvm_info("APB_MON",
-            $sformatf("Captured: %s", txn.convert2string()), UVM_MEDIUM)
-          end
-          ap.write(txn);
+
+          `uvm_info("APB_MON_DBG",
+            $sformatf("SETUP: paddr=0x%08h pwrite=%0b pwdata=0x%08h prdata=0x%08h",
+                      vif.paddr, vif.pwrite, vif.pwdata, vif.prdata),
+            UVM_HIGH)
         end
+
+        // APB ENABLE phase: capture data and publish
+        if (vif.psel === 1'b1 && vif.penable === 1'b1 && txn != null) begin
+          if (txn.kind == AHB_WRITE)
+            txn.data = vif.pwdata;
+          else
+            txn.data = vif.prdata;
+
+          `uvm_info("APB_MON",
+            $sformatf("Captured: %s", txn.convert2string()),
+            UVM_MEDIUM)
+
+          ap.write(txn);
+          txn = null;
+        end
+
+        // Safety clear when bus goes idle
+        if (vif.psel === 1'b0)
+          txn = null;
       end
     endtask
 
