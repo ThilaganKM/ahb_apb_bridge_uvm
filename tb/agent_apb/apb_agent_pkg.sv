@@ -35,7 +35,6 @@ package apb_agent_pkg;
 
       forever begin
         @(posedge vif.hclk);
-        #1;
 
         // APB SETUP phase: pre-drive prdata for reads
         if (vif.psel && !vif.penable && !vif.pwrite) begin
@@ -92,29 +91,35 @@ package apb_agent_pkg;
       @(posedge vif.hclk);
       wait (vif.hresetn === 1'b1);
 
-      forever begin
-        // Sample at posedge + small delta for signal settling
+      forever 
+      begin
+        // Sample at posedge 
         @(posedge vif.hclk);
-        #1;
-
         // Capture at ENABLE phase - psel=1, penable=1
-        if (vif.psel && vif.penable) begin
-          txn            = ahb_apb_txn::type_id::create("apb_mon_txn");
-          txn.addr       = vif.paddr;
-          txn.trans_type = HTRANS_NONSEQ;
-          txn.resp       = HRESP_OKAY;
+        if (vif.psel === 1'b1 && vif.penable === 1'b1) 
+        begin
+        // Capture immediately - no delay
+          begin
+            logic [31:0] cap_paddr  = vif.paddr;
+            logic [31:0] cap_pwdata = vif.pwdata;
+            logic [31:0] cap_prdata = vif.prdata;
+            logic        cap_pwrite = vif.pwrite;
+            
+            txn            = ahb_apb_txn::type_id::create("apb_mon_txn");
+            txn.addr       = cap_paddr;
+            txn.trans_type = HTRANS_NONSEQ;
+            txn.resp       = HRESP_OKAY;
 
-          if (vif.pwrite) begin
+            if (cap_pwrite) begin
             txn.kind = AHB_WRITE;
-            txn.data = vif.pwdata;
-          end else begin
+            txn.data = cap_pwdata;
+            end else begin
             txn.kind = AHB_READ;
-            txn.data = vif.prdata;
-          end
-
-          `uvm_info("APB_MON",
+            txn.data = cap_prdata;
+            end
+            `uvm_info("APB_MON",
             $sformatf("Captured: %s", txn.convert2string()), UVM_MEDIUM)
-
+          end
           ap.write(txn);
         end
       end
