@@ -81,6 +81,13 @@ module tb_uvm_top;
     .pwrite  (dut_if.pwrite)
   );
 
+  // Add this to tb_uvm_top.sv after DUT instantiation
+  always @(posedge hclk) begin
+    if (dut_if.psel)
+        $display("[TOP MON] t=%0t psel=%b penable=%b paddr=0x%08h pwdata=0x%08h",
+        $time, dut_if.psel, dut_if.penable, dut_if.paddr, dut_if.pwdata);
+  end
+
   // ===========================================================================
   // VCD DUMP
   // ===========================================================================
