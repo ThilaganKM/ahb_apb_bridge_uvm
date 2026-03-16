@@ -19,49 +19,34 @@ UVM_HOME = /home/cad/eda/Questa_2019/questasim/verilog_src/uvm-1.1d/src
 DEFINES = +define+ASSERT_ON +define+COVERAGE_ON
 
 #--------------------------------------------------
-# RTL Files
+# RTL
 #--------------------------------------------------
 
-RTL = \
-  ../rtl/ahb_apb_bridge.sv
+RTL = ../rtl/ahb_apb_bridge.sv
 
 #--------------------------------------------------
-# Directed TB Files (no UVM)
+# Directed TB (no UVM)
 #--------------------------------------------------
 
-DIRECTED_TOP = \
-  ../tb/top/tb_top.sv
+DIRECTED_TOP = ../tb/top/tb_top.sv
 
 #--------------------------------------------------
-# Interface Files (UVM phase - later)
+# UVM TB Files - ORDER IS CRITICAL
 #--------------------------------------------------
 
-INTERFACES = \
-  ../tb/interfaces/ahb_apb_if.sv
+INTERFACE = ../tb/interfaces/ahb_apb_if.sv
 
-#--------------------------------------------------
-# Transaction Package (UVM phase - later)
-#--------------------------------------------------
+TXN       = ../tb/txn/ahb_apb_txn_pkg.sv
 
-TXN = \
-  ../tb/txn/ahb_apb_txn_pkg.sv
+AHB_AGENT = ../tb/agent_ahb/ahb_agent_pkg.sv
 
-#--------------------------------------------------
-# Testbench Packages (UVM phase - later)
-#--------------------------------------------------
+APB_AGENT = ../tb/agent_apb/apb_agent_pkg.sv
 
-TBPKG = \
-  ../tb/agent_ahb/ahb_agent_pkg.sv \
-  ../tb/agent_apb/apb_agent_pkg.sv \
-  ../tb/env/bridge_env_pkg.sv \
-  ../tb/tests/bridge_test_pkg.sv
+ENV       = ../tb/env/bridge_env_pkg.sv
 
-#--------------------------------------------------
-# UVM Top (later)
-#--------------------------------------------------
+TESTS     = ../tb/tests/bridge_test_pkg.sv
 
-UVM_TOP = \
-  ../tb/top/tb_uvm_top.sv
+UVM_TOP   = ../tb/top/tb_uvm_top.sv
 
 #--------------------------------------------------
 # STEP 1: Compile RTL only
@@ -81,14 +66,18 @@ compile_directed:
 	$(VLOG) -sv $(DEFINES) $(DIRECTED_TOP)
 
 #--------------------------------------------------
-# STEP 3: Compile Full UVM TB (later)
+# STEP 3: Compile Full UVM TB
+# ORDER: interface → txn → agents → env → tests → RTL → top
 #--------------------------------------------------
 
 compile:
 	vlib work
-	$(VLOG) -sv +incdir+$(UVM_HOME) $(INTERFACES)
+	$(VLOG) -sv +incdir+$(UVM_HOME) $(INTERFACE)
 	$(VLOG) -sv +incdir+$(UVM_HOME) $(TXN)
-	$(VLOG) -sv +incdir+$(UVM_HOME) $(TBPKG)
+	$(VLOG) -sv +incdir+$(UVM_HOME) $(AHB_AGENT)
+	$(VLOG) -sv +incdir+$(UVM_HOME) $(APB_AGENT)
+	$(VLOG) -sv +incdir+$(UVM_HOME) $(ENV)
+	$(VLOG) -sv +incdir+$(UVM_HOME) $(TESTS)
 	$(VLOG) -sv +incdir+$(UVM_HOME) $(RTL)
 	$(VLOG) -sv +incdir+$(UVM_HOME) $(UVM_TOP)
 
@@ -98,61 +87,68 @@ compile:
 
 compile_cov:
 	vlib work
-	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(INTERFACES)
+	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(INTERFACE)
 	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(TXN)
-	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(TBPKG)
+	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(AHB_AGENT)
+	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(APB_AGENT)
+	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(ENV)
+	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(TESTS)
 	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(RTL)
 	$(VLOG) -sv +cover=sbceft -coveropt 3 $(DEFINES) +incdir+$(UVM_HOME) $(UVM_TOP)
 
 #--------------------------------------------------
-# Run Directed Test (CLI, no GUI)
+# Directed Test
 #--------------------------------------------------
 
 directed:
 	$(SIM) -c tb_top \
 	-voptargs="+acc" \
 	-do "run -all; quit"
-#--------------------------------------------------
-# Run Directed Test + dump VCD for GTKWave
-#--------------------------------------------------
-
-wave_directed:
-	$(SIM) -c tb_top \
-	-do "run -all; quit"
-	gtkwave sim.vcd &
 
 #--------------------------------------------------
-# UVM Tests (later)
+# UVM Tests
 #--------------------------------------------------
 
 smoke:
-	$(SIM) -c tb_top +UVM_TESTNAME=bridge_smoke_test \
+	$(SIM) -c tb_uvm_top \
+	+UVM_TESTNAME=bridge_smoke_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
+	-voptargs="+acc" \
 	-do "run -all; quit"
 
 write_test:
-	$(SIM) -c tb_top +UVM_TESTNAME=bridge_write_test \
+	$(SIM) -c tb_uvm_top \
+	+UVM_TESTNAME=bridge_write_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
+	-voptargs="+acc" \
 	-do "run -all; quit"
 
 read_test:
-	$(SIM) -c tb_top +UVM_TESTNAME=bridge_read_test \
+	$(SIM) -c tb_uvm_top \
+	+UVM_TESTNAME=bridge_read_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
+	-voptargs="+acc" \
 	-do "run -all; quit"
 
 b2b_test:
-	$(SIM) -c tb_top +UVM_TESTNAME=bridge_b2b_test \
+	$(SIM) -c tb_uvm_top \
+	+UVM_TESTNAME=bridge_b2b_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
+	-voptargs="+acc" \
 	-do "run -all; quit"
 
 reset_test:
-	$(SIM) -c tb_top +UVM_TESTNAME=bridge_reset_test \
+	$(SIM) -c tb_uvm_top \
+	+UVM_TESTNAME=bridge_reset_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
+	-voptargs="+acc" \
 	-do "run -all; quit"
 
 rand_test:
-	$(SIM) -c -coverage tb_top +UVM_TESTNAME=bridge_rand_test \
+	$(SIM) -c -coverage tb_uvm_top \
+	+UVM_TESTNAME=bridge_rand_test \
 	+UVM_VERBOSITY=UVM_MEDIUM \
+	-voptargs="+acc" \
 	-do "run -all; coverage save -codeAll bridge.ucdb; quit"
 
 #--------------------------------------------------
