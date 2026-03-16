@@ -632,5 +632,4 @@ class bridge_corners_test extends bridge_base_test;
 
       phase.drop_objection(this);
     endtask
-
 endclass : bridge_corners_test
