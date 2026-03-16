@@ -405,8 +405,7 @@ package bridge_test_pkg;
       `uvm_info("WRITE_TEST", "Starting write test", UVM_NONE)
 
       // Write-read pairs at multiple addresses
-      foreach (int i) begin
-        if (i >= 5) break;
+      for (int i=0;i<5;i++) begin
         wr_rd      = write_read_seq::type_id::create("wr_rd");
         wr_rd.addr = 32'h0000_0000 + (i * 8);
         wr_rd.data = 32'hCAFE_0000 | i;
