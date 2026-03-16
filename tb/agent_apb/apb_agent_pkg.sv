@@ -1,56 +1,19 @@
-// =============================================================================
-// File    : apb_agent_pkg.sv
-// Project : AHB-APB Bridge UVM Verification
-//
-// Description:
-//   APB Agent package containing:
-//     - apb_monitor      : observes APB bus, builds transactions
-//     - apb_slave_model  : drives prdata response during reads
-//     - apb_agent        : container (PASSIVE - no driver/sequencer)
-//
-// This agent is PASSIVE on the APB side - the bridge is the APB master.
-// We never drive APB control signals (psel, penable, pwrite, paddr, pwdata).
-// We only:
-//   1. Observe what the bridge drives (monitor)
-//   2. Respond with read data (slave model drives prdata)
-//
-// WHY a separate APB agent?
-//   AHB monitor sees: what the AHB master REQUESTED
-//   APB monitor sees: what the bridge actually DROVE to the peripheral
-//   Scoreboard compares both - verifying correct translation
-//   Example check: did paddr match haddr? did pwdata match hwdata?
-// =============================================================================
+`timescale 1ns/1ps
 
 package apb_agent_pkg;
 
   import uvm_pkg::*;
   `include "uvm_macros.svh"
-
   import ahb_apb_txn_pkg::*;
 
-  // ===========================================================================
-  // APB PERIPHERAL MODEL (Slave Model)
-  //
-  // Simulates an APB peripheral responding to bridge transactions.
-  // Drives prdata when bridge performs a read (psel=1, penable=1, pwrite=0).
-  //
-  // Simple memory model:
-  //   - 256-entry x 32-bit memory array
-  //   - Write: stores pwdata at paddr[7:2] (word-addressed)
-  //   - Read:  returns stored data on prdata
-  //
-  // This makes read-after-write tests meaningful:
-  //   Write 0xDEADBEEF to 0x20
-  //   Read  from 0x20 → should get 0xDEADBEEF back
-  // ===========================================================================
+  //===========================================================================
+  // APB SLAVE MODEL
+  // Drives prdata during reads. Has NO analysis port.
+  //===========================================================================
   class apb_slave_model extends uvm_component;
     `uvm_component_utils(apb_slave_model)
 
-    // Virtual interface
     virtual ahb_apb_if vif;
-
-    // Simple memory model - 256 words of 32 bits
-    // Index = paddr[7:2] (word address, ignoring byte offset)
     logic [31:0] mem [0:255];
 
     function new(string name, uvm_component parent);
@@ -59,99 +22,57 @@ package apb_agent_pkg;
 
     function void build_phase(uvm_phase phase);
       super.build_phase(phase);
-      if (!uvm_config_db #(virtual ahb_apb_if)::get(
-            this, "", "vif", vif))
-        `uvm_fatal("NOVIF",
-          "apb_slave_model: virtual interface not found in config_db")
-
-      // Initialize memory to known pattern
-      // Using address-based pattern so reads return predictable data
-      // even before a write has occurred
+      if (!uvm_config_db #(virtual ahb_apb_if)::get(this, "", "vif", vif))
+        `uvm_fatal("NOVIF", "apb_slave_model: vif not found")
       foreach (mem[i])
-        mem[i] = 32'hA5A5_0000 | i;   // e.g. mem[5] = 0xA5A50005
+        mem[i] = 32'hA5A5_0000 | i;
     endfunction
 
-    // -------------------------------------------------------------------------
-    // run_phase: respond to APB transactions
-    //
-    // Monitor psel+penable - this is the APB ENABLE phase when:
-    //   - Write: peripheral should latch pwdata (we store in mem)
-    //   - Read:  peripheral should drive prdata (we drive from mem)
-    //
-    // We drive prdata COMBINATIONALLY (via always_comb equivalent)
-    // as soon as psel goes high - peripheral must have data ready
-    // before penable, per APB spec.
-    // -------------------------------------------------------------------------
     task run_phase(uvm_phase phase);
-    ahb_apb_txn txn;
+      // Initialize prdata
+      @(posedge vif.hclk);
+      wait (vif.hresetn === 1'b1);
 
-    @(posedge vif.hclk);
-    wait (vif.hresetn === 1'b1);
-
-    forever begin
-        // Wait for ENABLE phase on posedge
+      forever begin
         @(posedge vif.hclk);
-        #1; // small delta to let signals settle
+        #1;
 
-        if (vif.psel && vif.penable) begin
-        txn = ahb_apb_txn::type_id::create("apb_mon_txn");
-
-        // Sample directly from interface signals (not clocking block)
-        // at the exact posedge where penable is high
-        txn.addr       = vif.paddr;
-        txn.trans_type = HTRANS_NONSEQ;
-        txn.resp       = HRESP_OKAY;
-
-        if (vif.pwrite) begin
-            txn.kind = AHB_WRITE;
-            txn.data = vif.pwdata;
-        end else begin
-            txn.kind = AHB_READ;
-            txn.data = vif.prdata;
+        // APB SETUP phase: pre-drive prdata for reads
+        if (vif.psel && !vif.penable && !vif.pwrite) begin
+          vif.prdata <= mem[vif.paddr[7:2]];
+          `uvm_info("APB_SLAVE",
+            $sformatf("READ SETUP: paddr=0x%08h driving prdata=0x%08h",
+              vif.paddr, mem[vif.paddr[7:2]]), UVM_HIGH)
         end
 
-        `uvm_info("APB_MON",
-            $sformatf("Captured: %s", txn.convert2string()),
-            UVM_MEDIUM)
-
-        ap.write(txn);
+        // APB ENABLE phase: latch write data
+        if (vif.psel && vif.penable && vif.pwrite) begin
+          mem[vif.paddr[7:2]] = vif.pwdata;
+          `uvm_info("APB_SLAVE",
+            $sformatf("WRITE: paddr=0x%08h pwdata=0x%08h",
+              vif.paddr, vif.pwdata), UVM_HIGH)
         end
-    end
+
+        // Bus idle: clear prdata
+        if (!vif.psel)
+          vif.prdata <= 32'h0;
+      end
     endtask
 
-    // -------------------------------------------------------------------------
-    // Utility: peek at memory location (used by scoreboard)
-    // -------------------------------------------------------------------------
     function logic [31:0] mem_read(logic [31:0] addr);
       return mem[addr[7:2]];
     endfunction
 
   endclass : apb_slave_model
 
-  // ===========================================================================
+  //===========================================================================
   // APB MONITOR
-  //
-  // Observes APB bus signals driven by the bridge.
-  // Builds transaction objects from completed APB transfers.
-  // Writes to analysis port for scoreboard.
-  //
-  // WHEN does the monitor capture?
-  //   At psel=1, penable=1 (ENABLE phase) - this is when APB transfer
-  //   is complete and all signals are stable and valid.
-  //
-  // WHAT does it capture?
-  //   paddr  → goes into txn.addr
-  //   pwdata → goes into txn.data (for writes)
-  //   prdata → goes into txn.data (for reads)
-  //   pwrite → determines txn.kind
-  // ===========================================================================
+  // Observes APB bus, builds transactions, writes to analysis port.
+  //===========================================================================
   class apb_monitor extends uvm_monitor;
     `uvm_component_utils(apb_monitor)
 
-    // Analysis port - sends captured APB transactions to scoreboard
     uvm_analysis_port #(ahb_apb_txn) ap;
-
-    // Virtual interface
     virtual ahb_apb_if vif;
 
     function new(string name, uvm_component parent);
@@ -161,52 +82,39 @@ package apb_agent_pkg;
     function void build_phase(uvm_phase phase);
       super.build_phase(phase);
       ap = new("ap", this);
-      if (!uvm_config_db #(virtual ahb_apb_if)::get(
-            this, "", "vif", vif))
-        `uvm_fatal("NOVIF",
-          "apb_monitor: virtual interface not found in config_db")
+      if (!uvm_config_db #(virtual ahb_apb_if)::get(this, "", "vif", vif))
+        `uvm_fatal("NOVIF", "apb_monitor: vif not found")
     endfunction
 
-    // -------------------------------------------------------------------------
-    // run_phase: monitor loop
-    //
-    // Simply waits for psel=1 && penable=1 on every posedge.
-    // This is the APB ENABLE phase - transfer is complete.
-    // Captures all relevant signals and broadcasts transaction.
-    // -------------------------------------------------------------------------
     task run_phase(uvm_phase phase);
       ahb_apb_txn txn;
 
-      // Wait for reset
       @(posedge vif.hclk);
       wait (vif.hresetn === 1'b1);
 
       forever begin
-        @(vif.monitor_cb);
+        // Sample at posedge + small delta for signal settling
+        @(posedge vif.hclk);
+        #1;
 
-        // APB ENABLE phase detection
-        if (vif.monitor_cb.psel && vif.monitor_cb.penable) begin
-          txn = ahb_apb_txn::type_id::create("apb_mon_txn");
-
-          txn.addr       = vif.monitor_cb.paddr;
+        // Capture at ENABLE phase - psel=1, penable=1
+        if (vif.psel && vif.penable) begin
+          txn            = ahb_apb_txn::type_id::create("apb_mon_txn");
+          txn.addr       = vif.paddr;
           txn.trans_type = HTRANS_NONSEQ;
           txn.resp       = HRESP_OKAY;
 
-          if (vif.monitor_cb.pwrite) begin
-            // Write transaction
+          if (vif.pwrite) begin
             txn.kind = AHB_WRITE;
-            txn.data = vif.monitor_cb.pwdata;
+            txn.data = vif.pwdata;
           end else begin
-            // Read transaction - capture prdata (peripheral response)
             txn.kind = AHB_READ;
-            txn.data = vif.monitor_cb.prdata;
+            txn.data = vif.prdata;
           end
 
           `uvm_info("APB_MON",
-            $sformatf("Captured: %s", txn.convert2string()),
-            UVM_MEDIUM)
+            $sformatf("Captured: %s", txn.convert2string()), UVM_MEDIUM)
 
-          // Broadcast to scoreboard
           ap.write(txn);
         end
       end
@@ -214,22 +122,14 @@ package apb_agent_pkg;
 
   endclass : apb_monitor
 
-  // ===========================================================================
-  // APB AGENT
-  //
-  // PASSIVE agent - contains monitor and slave model only.
-  // No sequencer or driver - bridge is the APB master, not us.
-  //
-  // is_active = UVM_PASSIVE (set in env build_phase)
-  // ===========================================================================
+  //===========================================================================
+  // APB AGENT - PASSIVE
+  //===========================================================================
   class apb_agent extends uvm_agent;
     `uvm_component_utils(apb_agent)
 
-    // Sub-components
     apb_monitor     mon;
     apb_slave_model slave;
-
-    // Analysis port forwarded from monitor to env/scoreboard
     uvm_analysis_port #(ahb_apb_txn) ap;
 
     function new(string name, uvm_component parent);
@@ -244,13 +144,9 @@ package apb_agent_pkg;
     endfunction
 
     function void connect_phase(uvm_phase phase);
-      // Forward monitor analysis port up to agent level
       mon.ap.connect(ap);
     endfunction
 
   endclass : apb_agent
 
 endpackage : apb_agent_pkg
-// =============================================================================
-// End of apb_agent_pkg.sv
-// =============================================================================
