@@ -554,7 +554,7 @@ package bridge_test_pkg;
 
   endclass : bridge_reset_test
 
-/ ===========================================================================
+// ===========================================================================
   // DATA CORNERS SEQUENCE
   // Explicitly drives all-zeros, all-ones, alternating patterns
   // These are classic bug triggers that random testing rarely hits
