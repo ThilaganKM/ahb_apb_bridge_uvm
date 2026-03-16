@@ -558,3 +558,79 @@ endpackage : bridge_test_pkg
 // =============================================================================
 // End of bridge_test_pkg.sv
 // =============================================================================
+
+// ===========================================================================
+  // DATA CORNERS SEQUENCE
+  // Explicitly drives all-zeros, all-ones, alternating patterns
+  // These are classic bug triggers that random testing rarely hits
+  // ===========================================================================
+  class data_corners_seq extends bridge_base_seq;
+    `uvm_object_utils(data_corners_seq)
+
+    function new(string name = "data_corners_seq");
+      super.new(name);
+    endfunction
+
+    task body();
+      ahb_apb_txn txn;
+
+      `uvm_info("CORNERS_SEQ", "Driving data corner cases", UVM_MEDIUM)
+
+      // All zeros - tests zero propagation bugs
+      txn = create_write(32'h0000_0010, 32'h0000_0000);
+      send(txn);
+
+      // All ones - tests overflow/saturation bugs
+      txn = create_write(32'h0000_0014, 32'hFFFF_FFFF);
+      send(txn);
+
+      // Alternating 1010 - tests crosstalk between adjacent bits
+      txn = create_write(32'h0000_0018, 32'hAAAA_AAAA);
+      send(txn);
+
+      // Alternating 0101 - complement of above
+      txn = create_write(32'h0000_001C, 32'h5555_5555);
+      send(txn);
+
+      // Read back all four to verify data integrity through bridge
+      txn = create_read(32'h0000_0010); send(txn);
+      txn = create_read(32'h0000_0014); send(txn);
+      txn = create_read(32'h0000_0018); send(txn);
+      txn = create_read(32'h0000_001C); send(txn);
+
+      `uvm_info("CORNERS_SEQ", "Data corner cases complete", UVM_MEDIUM)
+    endtask
+
+  endclass : data_corners_seq
+
+  // ===========================================================================
+  // DATA CORNERS TEST
+  // Runs corner case sequence first then random for full coverage closure
+  // ===========================================================================
+  class bridge_corners_test extends bridge_base_test;
+    `uvm_component_utils(bridge_corners_test)
+
+    function new(string name, uvm_component parent);
+      super.new(name, parent);
+    endfunction
+
+    task run_phase(uvm_phase phase);
+      data_corners_seq corners;
+      rand_seq         rseq;
+
+      phase.raise_objection(this);
+      `uvm_info("CORNERS_TEST", "Starting data corners test", UVM_NONE)
+
+      // Step 1: hit corner cases explicitly
+      corners = data_corners_seq::type_id::create("corners");
+      corners.start(get_sequencer());
+
+      // Step 2: random for everything else
+      rseq       = rand_seq::type_id::create("rseq");
+      rseq.count = 100;
+      rseq.start(get_sequencer());
+
+      phase.drop_objection(this);
+    endtask
+
+  endclass : bridge_corners_test

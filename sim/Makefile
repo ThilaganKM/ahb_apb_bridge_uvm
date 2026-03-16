@@ -151,6 +151,13 @@ rand_test:
 	-voptargs="+acc" \
 	-do "run -all; coverage save -codeAll bridge.ucdb; quit"
 
+corners_test:
+	$(SIM) -c tb_uvm_top \
+	+UVM_TESTNAME=bridge_corners_test \
+	+UVM_VERBOSITY=UVM_MEDIUM \
+	-voptargs="+acc" \
+	-do "run -all; quit"
+
 #--------------------------------------------------
 # Coverage Report
 #--------------------------------------------------
