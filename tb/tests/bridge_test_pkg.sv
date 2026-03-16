@@ -564,7 +564,7 @@ endpackage : bridge_test_pkg
   // Explicitly drives all-zeros, all-ones, alternating patterns
   // These are classic bug triggers that random testing rarely hits
   // ===========================================================================
-  class data_corners_seq extends bridge_base_seq;
+class data_corners_seq extends bridge_base_seq;
     `uvm_object_utils(data_corners_seq)
 
     function new(string name = "data_corners_seq");
@@ -601,13 +601,13 @@ endpackage : bridge_test_pkg
       `uvm_info("CORNERS_SEQ", "Data corner cases complete", UVM_MEDIUM)
     endtask
 
-  endclass : data_corners_seq
+endclass : data_corners_seq
 
   // ===========================================================================
   // DATA CORNERS TEST
   // Runs corner case sequence first then random for full coverage closure
   // ===========================================================================
-  class bridge_corners_test extends bridge_base_test;
+class bridge_corners_test extends bridge_base_test;
     `uvm_component_utils(bridge_corners_test)
 
     function new(string name, uvm_component parent);
@@ -633,4 +633,4 @@ endpackage : bridge_test_pkg
       phase.drop_objection(this);
     endtask
 
-  endclass : bridge_corners_test
+endclass : bridge_corners_test
